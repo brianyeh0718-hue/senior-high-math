@@ -15,7 +15,7 @@ window.SITE = {
       path: 'book3/',
       chapters: [
         { no: '單元五', title: '指數函數', path: 'book3/unit5/', ready: true,
-          desc: '指數的推廣、指數函數圖形、方程式與不等式、指數模型', cover: 'book3/unit5/assets/slides/slide01.jpg' }
+          desc: '指數的推廣、指數函數圖形、方程式與不等式、指數模型；含心智圖與 57 張學習卡', cover: 'book3/unit5/assets/slides/slide01.jpg' }
       ]
     }
   ]

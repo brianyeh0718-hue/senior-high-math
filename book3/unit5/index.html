@@ -188,6 +188,30 @@ body.inking .tools{box-shadow:0 0 0 3px var(--pink),0 16px 50px rgba(0,0,0,.5)}
 .info-strip{margin-bottom:18px}
 .stack{display:grid;gap:18px;align-content:start}
 .info-strip .info-crop{max-width:1100px;margin:0 auto}
+/* ---------- Mind map ---------- */
+.mm-root{text-align:center;margin:0 auto 16px;max-width:420px;padding:12px 18px;border-radius:14px;background:linear-gradient(90deg,#36e0ff,#7aa8ff);color:#06142b;font-weight:900;font-size:22px;box-shadow:0 0 24px rgba(54,224,255,.35)}
+.mm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.mm-br{border:1px solid var(--line);border-top:4px solid var(--bc);border-radius:14px;background:rgba(3,12,28,.5);padding:10px 12px}
+.mm-br h4{margin:0 0 8px;color:var(--bc);font-size:17px}
+.mm-br details{margin:6px 0;border-left:2px solid var(--bc);padding-left:10px}
+.mm-br summary{cursor:pointer;font-weight:700;font-size:15px;list-style:none}
+.mm-br summary::-webkit-details-marker{display:none}
+.mm-br summary::before{content:'▸ ';color:var(--bc)}
+.mm-br details[open]>summary::before{content:'▾ '}
+.mm-leaf{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 4px}
+.mm-leaf span{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:3px 9px;font-size:14px}
+/* ---------- Flashcards ---------- */
+.fc-wrap{max-width:760px;margin:0 auto}
+.fc{perspective:1200px;cursor:pointer;height:280px;outline:none}
+.fc-in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.fc.flip .fc-in{transform:rotateY(180deg)}
+.fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;display:grid;place-items:center;padding:24px 28px;text-align:center;font-size:clamp(18px,2.6vw,26px);font-weight:700;line-height:1.5;overflow:auto}
+.fc-front{background:linear-gradient(160deg,#123a78,#0b2147);border:2px solid var(--cyan)}
+.fc-back{background:linear-gradient(160deg,#1b4d3a,#0b2a24);border:2px solid var(--green);transform:rotateY(180deg);font-weight:500}
+.fc-tag{position:absolute;top:10px;left:14px;font-size:13px;color:var(--mute);font-weight:500}
+.fc-bar{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin-top:12px}
+.fc-stat{color:var(--mute);font-size:14px;text-align:center;margin-top:8px}
+@media(max-width:700px){.fc{height:320px}}
 </style>
 </head>
 <body class="tools-open">
@@ -206,6 +230,8 @@ body.inking .tools{box-shadow:0 0 0 3px var(--pink),0 16px 50px rgba(0,0,0,.5)}
   <a href="#s2"><b>5-2</b>圖形與性質</a>
   <a href="#s3"><b>5-3</b>方程式與不等式</a>
   <a href="#s4"><b>5-4</b>指數模型</a>
+  <a href="#mind"><b>🧠</b>心智圖</a>
+  <a href="#cards"><b>🃏</b>學習卡</a>
   <a href="#yt"><b>▶</b>補充影片</a>
   <a href="#review"><b>★</b>總複習</a>
 </div></nav>
@@ -328,6 +354,41 @@ body.inking .tools{box-shadow:0 0 0 3px var(--pink),0 16px 50px rgba(0,0,0,.5)}
       <div class="card"><h3><span class="n">3</span>隨堂評量</h3><div class="quiz" data-quiz="s4"></div></div>
     </div>
   </div>
+</section>
+
+<!-- ================= Mind map ================= -->
+<section class="unit" id="mind">
+  <div class="unit-head"><span class="tag">🧠</span><div>
+    <h2>單元心智圖</h2>
+    <ul><li>NotebookLM 產生的概念架構（中文版）：點小標題可展開或收合</li><li>上課可先全部收合，請學生猜每個分支下面有什麼，再逐一打開</li></ul>
+  </div></div>
+  <div class="card">
+    <div class="fc-bar" style="justify-content:flex-start;margin:0 0 12px"><button class="btn pri" id="mmOpen">全部展開</button><button class="btn" id="mmClose">全部收合</button></div>
+    <div id="mindmap"></div>
+  </div>
+</section>
+
+<!-- ================= Flashcards ================= -->
+<section class="unit" id="cards">
+  <div class="unit-head"><span class="tag">🃏</span><div>
+    <h2>學習卡</h2>
+    <ul><li>點卡片（或按空白鍵）翻面看答案；← → 切換上一張、下一張</li><li>標記「我會了／再複習」，可以只練還不熟的卡片；標記只存在這台電腦的瀏覽器</li></ul>
+  </div></div>
+  <div class="card"><div class="fc-wrap">
+    <div class="seg" id="fcFilter"><button class="on" data-f="all">全部</button><button data-f="todo">只練「再複習」與未標記</button></div>
+    <div class="fc" id="fc" tabindex="0" role="button" aria-label="學習卡，點一下翻面"><div class="fc-in">
+      <div class="fc-face fc-front"><span class="fc-tag" id="fcTagF"></span><div id="fcFront"></div></div>
+      <div class="fc-face fc-back"><span class="fc-tag" id="fcTagB"></span><div id="fcBack"></div></div>
+    </div></div>
+    <div class="fc-bar">
+      <button class="btn" id="fcPrev">‹ 上一張</button><button class="btn pri" id="fcFlip">翻面</button><button class="btn" id="fcNext">下一張 ›</button>
+      <button class="btn" id="fcShuffle">🔀 洗牌</button>
+    </div>
+    <div class="fc-bar">
+      <button class="btn" id="fcKnow" style="border-color:var(--green)">✔ 我會了</button><button class="btn" id="fcAgain" style="border-color:var(--orange)">↻ 再複習</button><button class="btn" id="fcReset">清除標記</button>
+    </div>
+    <div class="fc-stat" id="fcStat"></div>
+  </div></div>
 </section>
 
 <!-- ================= YouTube ================= -->
@@ -724,6 +785,73 @@ function segTabs(root,cb){$$('button',root).forEach(b=>b.addEventListener('click
   const manual=()=>{unit='自行調整中';note='';$$('#v4pre button').forEach(x=>x.classList.remove('on'));draw();};
   [iA,bs,ns,iD].forEach(x=>x.oninput=manual);lin.onchange=draw;
   $('#v4pre button').click();
+})();
+
+/* ================= Mind map ================= */
+const MINDMAP={"name":"單元五 指數函數","children":[{"name":"5-1 指數的推廣與指數律","children":[{"name":"正整數指數","children":[{"name":"定義：底數與指數"},{"name":"指數律"}]},{"name":"零指數與負整數指數","children":[{"name":"a⁰ = 1（a ≠ 0）"},{"name":"a⁻ⁿ = 1/aⁿ（a ≠ 0）"},{"name":"讓指數律繼續成立"}]},{"name":"n 次方根與有理數指數","children":[{"name":"a^(1/n) = ⁿ√a"},{"name":"a^(m/n) = (ⁿ√a)ᵐ"},{"name":"底數限制：a \u003e 0"}]},{"name":"實數指數","children":[{"name":"用逼近（夾擠）來定義"}]},{"name":"常見迷思","children":[{"name":"負指數不是負數"},{"name":"指數律不適用於加法"},{"name":"√(a²) = |a|"}]}]},{"name":"5-2 指數函數的圖形與性質","children":[{"name":"定義","children":[{"name":"f(x) = aˣ（a \u003e 0，a ≠ 1）"},{"name":"定義域：所有實數"}]},{"name":"圖形特徵","children":[{"name":"必過定點 (0, 1)"},{"name":"值域：y \u003e 0"},{"name":"水平漸近線：y = 0（x 軸）"},{"name":"凹向上"}]},{"name":"單調性","children":[{"name":"a \u003e 1：嚴格遞增"},{"name":"0 \u003c a \u003c 1：嚴格遞減"}]},{"name":"平移與對稱","children":[{"name":"y = aˣ 與 y = (1/a)ˣ 對稱於 y 軸"},{"name":"平移：y = a^(x−h) + k"},{"name":"新的漸近線：y = k"}]}]},{"name":"5-3 大小比較、方程式與不等式","children":[{"name":"比較大小的方法","children":[{"name":"化同底數"},{"name":"化同指數"},{"name":"找中間值（例如 1）"},{"name":"同時乘方"}]},{"name":"指數方程式","children":[{"name":"化同底：a^f(x) = a^g(x) ⇒ f(x) = g(x)"},{"name":"換元：令 t = aˣ（t \u003e 0）"}]},{"name":"指數不等式","children":[{"name":"a \u003e 1：不等號方向不變"},{"name":"0 \u003c a \u003c 1：不等號反向"}]},{"name":"注意事項","children":[{"name":"換元後必須檢查 t \u003e 0"},{"name":"底數小於 1 時不等號反向"}]}]},{"name":"5-4 指數模型與生活應用","children":[{"name":"一般形式","children":[{"name":"y = A · bᵗ"},{"name":"b \u003e 1：指數成長"},{"name":"0 \u003c b \u003c 1：指數衰退"}]},{"name":"應用","children":[{"name":"倍增：y = A · 2^(t/T)"},{"name":"半衰期：y = A · (1/2)^(t/T)"},{"name":"複利：本利和 = P(1 + r)ⁿ"},{"name":"平均成長率的計算"}]},{"name":"線性成長 vs 指數成長","children":[{"name":"指數成長最後一定超越線性成長"}]}]}]};
+(function(){
+  const box=$('#mindmap');if(!MINDMAP){box.textContent='（心智圖資料尚未載入）';return;}
+  const esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML;};
+  const COLORS=['#ffd84d','#36e0ff','#ff9f43','#3ee08f','#ff7aa8','#b48cff'];
+  const node=n=>n.children&&n.children.length?`<details open><summary>${esc(n.name)}</summary>${
+      n.children.every(c=>!c.children||!c.children.length)?`<div class="mm-leaf">${n.children.map(c=>`<span>${esc(c.name)}</span>`).join('')}</div>`:n.children.map(node).join('')}</details>`
+    :`<div class="mm-leaf"><span>${esc(n.name)}</span></div>`;
+  box.innerHTML=`<div class="mm-root">${esc(MINDMAP.name)}</div><div class="mm-grid">${(MINDMAP.children||[]).map((b,i)=>
+    `<div class="mm-br" style="--bc:${COLORS[i%COLORS.length]}"><h4>${esc(b.name)}</h4>${(b.children||[]).map(node).join('')}</div>`).join('')}</div>`;
+  $('#mmOpen').onclick=()=>$$('#mindmap details').forEach(d=>d.open=true);
+  $('#mmClose').onclick=()=>$$('#mindmap details').forEach(d=>d.open=false);
+})();
+
+/* ================= Flashcards ================= */
+const CARDS_RAW=[{"f":"規定 $a^0 = 1$（$a \\neq 0$）的主要數學目的是什麼？","b":"為了讓指數律在指數擴展至 0 時繼續成立（例如由 $a^n \\div a^n = a^{n-n} = a^0 = 1$ 推導）。"},{"f":"對於 $a \\neq 0$ 且正整數 $n$，負整數指數 $a^{-n}$ 如何定義？","b":"$a^{-n} = \\frac{1}{a^n}$"},{"f":"為什麼 $0^0$ 與 0 的負整數次方在數學上沒有定義？","b":"因為負整數次方代表倒數，若底數為 0 會導致除以 0（無意義）。"},{"f":"對於正實數 $a$ 與正整數 $n$，分數指數 $a^{1/n}$ 的定義是什麼？","b":"$a^{1/n} = \\sqrt[n]{a}$（即 $a$ 的正 $n$ 次方根）。"},{"f":"對於 $a \u003e 0$、整數 $m$ 與正整數 $n$，有理數指數 $a^{m/n}$ 的定義為何？","b":"$a^{m/n} = (\\sqrt[n]{a})^m = \\sqrt[n]{a^m}$"},{"f":"為什麼在定義有理數指數 $a^{m/n}$ 時，必須規定底數 $a \u003e 0$？","b":"若底數為負數會產生矛盾；例如 $(-8)^{1/3} = -2$，但利用分數約分 $(-8)^{2/6} = \\sqrt[6]{(-8)^2} = 2$，結果不一致。"},{"f":"如何利用數學概念說明無理數指數（例如 $2^{\\sqrt{2}}$）的意義？","b":"利用 $\\sqrt{2}$ 的有理數不足近似值與過剩近似值上下逼近（夾擠），最後極限趨近於同一個實數。"},{"f":"計算 $8^{2/3} + 27^{-1/3} - (\\frac{1}{16})^{-3/4}$ 的值。","b":"$-\\frac{11}{3}$"},{"f":"將根式式子 $\\sqrt[3]{4} \\times \\sqrt[6]{2} \\times \\sqrt{2}$ 化簡並寫成 2 的次方形式。","b":"$2^{4/3}$"},{"f":"設 $a, b \u003e 0$，化簡 $(a^{1/2} \\cdot b^{-1/3})^6 \\div (a^2 \\cdot b^{-1})$ 的結果。","b":"$\\frac{a}{b}$（或 $a b^{-1}$）"},{"f":"已知 $a \u003e 0$ 且 $a^{1/2} + a^{-1/2} = 3$，求 $a + a^{-1}$ 的值。","b":"7"},{"f":"已知 $a \u003e 0$ 且 $a^{1/2} + a^{-1/2} = 3$，求 $a^{3/2} + a^{-3/2}$ 的值。","b":"18"},{"f":"若 $2^x = 3$，求 $4^{x+1}$ 的值。","b":"36"},{"f":"若 $2^x = 3$，求 $8^{-x}$ 的值。","b":"$\\frac{1}{27}$"},{"f":"「$a^{-n}$ 一定是負數」這句話是否正確？為什麼？","b":"不正確。負指數代表「倒數」而非負數，例如 $2^{-3} = \\frac{1}{8} \u003e 0$。"},{"f":"對於任意實數 $a$，$\\sqrt{a^2} = a$ 是否一定成立？","b":"不一定成立。正確公式為 $\\sqrt{a^2} = |a|$（當 $a \u003c 0$ 時 $\\sqrt{a^2} = -a$）。"},{"f":"指數函數 $f(x) = a^x$ 的定義中，對底數 $a$ 有何限制條件？","b":"$a \u003e 0$ 且 $a \\neq 1$"},{"f":"為什麼指數函數 $f(x) = a^x$ 不能以 $a = 1$ 為底數？","b":"因為 $1^x = 1$ 為常數函數，不具備指數成長或衰退的特性。"},{"f":"指數函數 $f(x) = a^x$ 的定義域與值域分別為何？","b":"定義域為所有實數 $\\mathbb{R}$；值域為 $y \u003e 0$。"},{"f":"指數函數 $y = a^x$（$a \u003e 0, a \\neq 1$）必通過哪一個固定點？","b":"$(0, 1)$"},{"f":"當底數 $a \u003e 1$ 時，指數函數 $y = a^x$ 的單調性為何？漸近線為何？","b":"嚴格遞增；當 $x \\to -\\infty$ 時 $y \\to 0$，$x$ 軸（即 $y = 0$）為水平漸近線。"},{"f":"當底數 $0 \u003c a \u003c 1$ 時，指數函數 $y = a^x$ 的單調性為何？漸近線為何？","b":"嚴格遞減；當 $x \\to +\\infty$ 時 $y \\to 0$，$x$ 軸（即 $y = 0$）為水平漸近線。"},{"f":"函數 $y = a^x$ 與 $y = (\\frac{1}{a})^x$ 的圖形具有什麼對稱關係？","b":"兩圖形對稱於 $y$ 軸。"},{"f":"當 $a \u003e 1$ 時，底數 $a$ 越大，指數函數 $y = a^x$ 的圖形在 $x \u003e 0$ 與 $x \u003c 0$ 的區域有何差異？","b":"在 $x \u003e 0$ 時上升越快（位置越高）；在 $x \u003c 0$ 時反而越貼近 $x$ 軸（位置越低）。"},{"f":"指數函數 $y = a^x$ 圖形的凹凸性為何？","b":"凹向上（向上彎），即任意兩點割線位於圖形上方。"},{"f":"將指數函數 $y = a^x$ 的圖形向右平移 $h$ 個單位、向上平移 $k$ 個單位後，方程式為何？","b":"$y = a^{x-h} + k$"},{"f":"函數 $y = 2^{x-1} + 3$ 的漸近線、值域與過哪一個定點？","b":"漸近線為 $y = 3$；值域為 $y \u003e 3$；過定點 $(1, 4)$。"},{"f":"若指數函數 $f(x) = a^x$ 的圖形通過點 $(2, 9)$，求 $a$ 與 $f(-1)$ 的值。","b":"$a = 3$，$f(-1) = \\frac{1}{3}$"},{"f":"函數 $y = 2^x$ 與 $y = x^2$ 的圖形共有幾個交點？","b":"3 個交點（分別在 $x = 2$、$x = 4$ 以及 $x \\approx -0.77$ 處）。"},{"f":"指數函數 $y = 2^x$ 與冪函數 $y = x^2$ 的本質差異為何？","b":"指數函數變數在「指數」（$2^x$）；冪函數變數在「底數」（$x^2$）。"},{"f":"「指數函數 $y = 2^x$ 當 $x$ 非常小的時候最終會碰到 $x$ 軸」這句話是否正確？","b":"不正確。$2^x$ 恆大於 0，$x$ 軸僅為水平漸近線，圖形無限靠近但永不相交。"},{"f":"當同底數指數式 $a^u \u003e a^v$ 且底數 $a \u003e 1$ 時，指數 $u$ 與 $v$ 的大小關係為何？","b":"$u \u003e v$（底數大於 1，不等號方向不變）。"},{"f":"當同底數指數式 $a^u \u003e a^v$ 且底數 $0 \u003c a \u003c 1$ 時，指數 $u$ 與 $v$ 的大小關係為何？","b":"$u \u003c v$（底數小於 1，不等號方向反向）。"},{"f":"比較 $a = 2^{0.3}$、$b = (\\frac{1}{2})^{-0.4}$、$c = 4^{0.1}$ 三數的大小。","b":"$c \u003c a \u003c b$"},{"f":"如何比較根式 $\\sqrt{2}$、$\\sqrt[3]{3}$ 與 $\\sqrt[5]{5}$ 的大小？","b":"化成分數指數 $2^{1/2}, 3^{1/3}, 5^{1/5}$ 並同時取 30 次方比較：$2^{15} = 32768$、$3^{10} = 59049$、$5^6 = 15625$，故 $\\sqrt[5]{5} \u003c \\sqrt{2} \u003c \\sqrt[3]{3}$。"},{"f":"解指數方程式 $3^{2x-1} = 27^{x+1}$。","b":"$x = -4$"},{"f":"解指數方程式 $4^x - 3 \\cdot 2^{x+1} + 8 = 0$。","b":"$x = 1$ 或 $x = 2$"},{"f":"解指數方程式 $4^x + 2^x - 6 = 0$ 時，變數代換 $t = 2^x$ 解得 $t = 2$ 或 $t = -3$，為何 $t = -3$ 必須捨去？","b":"因為對於任意實數 $x$，指數函數 $2^x$ 的值恆正（$t = 2^x \u003e 0$），故不接受負解。"},{"f":"解指數不等式 $(\\frac{1}{2})^{x^2-2x} \u003e (\\frac{1}{2})^3$。","b":"$-1 \u003c x \u003c 3$"},{"f":"解指數不等式 $9^x - 4 \\cdot 3^x + 3 \\le 0$。","b":"$0 \\le x \\le 1$"},{"f":"解指數方程式 $2^{x+3} = \\frac{1}{4}$ 的解為何？","b":"$x = -5$"},{"f":"解指數不等式 $(\\frac{1}{3})^{x-1} \\ge 9$ 的解為何？","b":"$x \\le -1$"},{"f":"「$2^x + 2^x = 2^{2x}$」這個算式是否正確？正確結果為何？","b":"不正確。指數律不適用於加法，$2^x + 2^x = 2 \\cdot 2^x = 2^{x+1}$。"},{"f":"通用指數模型 $y = A \\cdot b^t$ 中，$b \u003e 1$ 與 $0 \u003c b \u003c 1$ 分別代表何種現象？","b":"$b \u003e 1$ 代表指數成長；$0 \u003c b \u003c 1$ 代表指數衰退。"},{"f":"若某物質數量每經過時間 $T$ 變成 2 倍，初始量為 $A$，則時間 $t$ 後的數量模型公式為何？","b":"$y = A \\cdot 2^{t/T}$"},{"f":"若某放射性元素半衰期為 $T$，初始量為 $A$，則經過時間 $t$ 後剩餘量的模型公式為何？","b":"$y = A \\cdot (\\frac{1}{2})^{t/T}$"},{"f":"本金 $P$、每期利率 $r$，經過 $n$ 期後的複利本利和公式為何？","b":"本利和 $= P(1 + r)^n$"},{"f":"線性成長與指數成長在增加方式上有何關鍵區別？","b":"線性成長每單位時間增加「固定數量」；指數成長每單位時間增加「固定倍率」。"},{"f":"某細菌每 20 分鐘分裂一次（數量變 2 倍），開始時有 100 隻，2 小時後的細菌數量為多少？","b":"6400 隻（$100 \\times 2^6 = 6400$）"},{"f":"碳-14 半衰期約 5730 年。某化石中的碳-14 剩餘量為原來的 $\\frac{1}{8}$，該化石約經過了幾年？","b":"17190 年（經過 3 個半衰期：$3 \\times 5730 = 17190$）"},{"f":"本金 10 萬元，年利率 2%，每年複利一次，3 年後的本利和約為多少元？","b":"約 106121 元（$100000 \\times 1.02^3 \\approx 106120.8$）"},{"f":"某藥物在體內每小時代謝掉 20%，服用 500 毫克後，3 小時後體內剩餘藥量為多少？","b":"256 毫克（$500 \\times 0.8^3 = 256$）"},{"f":"某公司營收兩年共成長 21%，若每年成長率相同，則每年平均成長率為何？","b":"10%（由 $(1 + r)^2 = 1.21 \\implies 1 + r = 1.1 \\implies r = 10\\%$ 計算得，而非相除）"},{"f":"「某公司營收兩年共成長 21%，平均每年成長 10.5%」這個說法錯在哪裡？","b":"錯在將連乘（複利成長）當成連加。正確年成長率應解 $(1+r)^2 = 1.21$，得 $r = 10\\%$。"},{"f":"「物質經過兩個半衰期後就會全部消失」這句話是否正確？為什麼？","b":"不正確。每次半衰是減少「現有量的一半」，經過兩個半衰期後剩餘原本的 $\\frac{1}{4}$，永遠不會變為 0。"},{"f":"商品的價格先上漲 10% 再下跌 10%，最後價格是否會回到原價？","b":"不會回到原價。計算為 $1.1 \\times 0.9 = 0.99$，最終價格會比原價少 1%。"},{"f":"某放射性物質半衰期為 8 天，80 公克經過 24 天後剩餘多少公克？","b":"10 公克（經過 3 個半衰期：$80 \\times (\\frac{1}{2})^3 = 10$）"}];
+/* NotebookLM 學習卡的數學式是 LaTeX，這裡轉成 Unicode 文字顯示 */
+function tex2u(s){
+  const SUP={'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','+':'⁺','−':'⁻','-':'⁻','n':'ⁿ','x':'ˣ','m':'ᵐ','t':'ᵗ','a':'ᵃ','b':'ᵇ','k':'ᵏ','h':'ʰ','i':'ⁱ','u':'ᵘ','v':'ᵛ','y':'ʸ'};
+  const supOK=t=>t.length<=2||/^[−\-+]?\d+$/.test(t);
+  const sup=t=>[...t].every(c=>SUP[c])&&supOK(t)?[...t].map(c=>SUP[c]).join(''):'^('+t+')';
+  const simple=t=>/^[\w.]+$/.test(t);
+  return s.replace(/\$([^$]+)\$/g,(_,m)=>{
+    m=m.replace(/\\left|\\right/g,'').replace(/\\%/g,'%').replace(/\\mathbb\{R\}/g,'ℝ')
+     .replace(/\\neq/g,'≠').replace(/\\le(q)?/g,'≤').replace(/\\ge(q)?/g,'≥').replace(/\\times/g,'×').replace(/\\div/g,'÷')
+     .replace(/\\cdot/g,'·').replace(/\\implies/g,'⇒').replace(/\\Rightarrow/g,'⇒').replace(/\\to/g,'→').replace(/\\infty/g,'∞')
+     .replace(/\\approx/g,'≈').replace(/\\pm/g,'±').replace(/\\,|\\;|\\ /g,' ').replace(/-/g,'−');
+    for(let k=0;k<12;k++){const o=m;
+      m=m.replace(/\\frac\{([^{}]*)\}\{([^{}]*)\}/g,(_,a,b)=>(simple(a)?a:'('+a+')')+'/'+(simple(b)?b:'('+b+')'))
+         .replace(/\\sqrt\[([^\]]*)\]\{([^{}]*)\}/g,(_,n,x)=>[...n].map(c=>SUP[c]||c).join('')+'√'+(simple(x)?x:'('+x+')'))
+         .replace(/\\sqrt\{([^{}]*)\}/g,(_,x)=>'√'+(simple(x)?x:'('+x+')'))
+         .replace(/\^\{([^{}]*)\}/g,(_,t)=>sup(t)).replace(/\^([0-9a-z])/g,(_,c)=>SUP[c]||'^'+c);
+      if(m===o)break;}
+    return m.replace(/[{}]/g,'').replace(/\\/g,'');
+  });
+}
+const CARDS=CARDS_RAW.map(c=>({f:tex2u(c.f),b:tex2u(c.b)}));
+(function(){
+  const KEY='math3-u5-cards';let mark={};try{mark=JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){mark={};}
+  const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(mark));}catch(e){}};
+  let order=CARDS.map((_,i)=>i),filter='all',pos=0;
+  const fc=$('#fc');
+  const list=()=>filter==='all'?order:order.filter(i=>mark[i]!=='know');
+  function show(){
+    const L=list();
+    if(!CARDS.length){$('#fcFront').textContent='（學習卡資料尚未載入）';$('#fcStat').textContent='';return;}
+    if(!L.length){$('#fcFront').textContent='🎉 全部都會了！按「清除標記」或切回「全部」再練一次。';$('#fcBack').textContent='';fc.classList.remove('flip');statLine();return;}
+    pos=(pos+L.length)%L.length;const i=L[pos],c=CARDS[i];fc.classList.remove('flip');
+    const tag=`第 ${pos+1} / ${L.length} 張`+(mark[i]==='know'?'　✔ 會了':mark[i]==='again'?'　↻ 再複習':'');
+    setTimeout(()=>{$('#fcFront').textContent=c.f;$('#fcBack').textContent=c.b;},fc.classList.contains('flip')?250:0);
+    $('#fcFront').textContent=c.f;$('#fcBack').textContent=c.b;$('#fcTagF').textContent=tag;$('#fcTagB').textContent=tag+'　答案';statLine();
+  }
+  function statLine(){const k=Object.values(mark).filter(v=>v==='know').length,a=Object.values(mark).filter(v=>v==='again').length;
+    $('#fcStat').textContent=`共 ${CARDS.length} 張｜我會了 ${k}｜再複習 ${a}｜未標記 ${CARDS.length-k-a}`;}
+  const flip=()=>fc.classList.toggle('flip');
+  fc.onclick=flip;$('#fcFlip').onclick=flip;
+  $('#fcPrev').onclick=()=>{pos--;show();};$('#fcNext').onclick=()=>{pos++;show();};
+  $('#fcShuffle').onclick=()=>{for(let i=order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]];}pos=0;show();};
+  const setMark=v=>{const L=list();if(!L.length)return;mark[L[pos]]=v;save();if(filter==='todo'&&v==='know'){show();}else{pos++;show();}};
+  $('#fcKnow').onclick=()=>setMark('know');$('#fcAgain').onclick=()=>setMark('again');
+  $('#fcReset').onclick=()=>{mark={};save();pos=0;show();};
+  segTabs($('#fcFilter'),b=>{filter=b.dataset.f;pos=0;show();});
+  fc.addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){flip();e.preventDefault();}if(e.key==='ArrowRight'){pos++;show();}if(e.key==='ArrowLeft'){pos--;show();}});
+  show();
 })();
 
 /* ================= Tools panel ================= */
