@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>高中數學第三冊</title>
+<meta name="description" content="高中數學第三冊（十一年級上學期）各單元互動教學網頁。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../data/site.css">
+</head>
+<body>
+<header><div class="wrap">
+  <a class="crumb" href="../">← 回到網站首頁</a>
+  <div class="kicker">高中數學 · 十一年級上學期（龍騰版）</div>
+  <h1>第三冊</h1>
+  <p>選擇單元進入互動教學網頁。</p>
+</div></header>
+<main><div class="wrap" id="books"></div></main>
+<footer><div class="wrap">教學內容依 108 課綱與龍騰版教科書單元編排。</div></footer>
+<script src="../data/chapters.js"></script>
+<script src="../data/render.js"></script>
+<script>renderBooks(document.getElementById('books'), '../', 'book3');</script>
+</body>
+</html>
