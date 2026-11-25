@@ -15,9 +15,9 @@ window.SITE = {
       path: 'book3/',
       chapters: [
         { no: '單元五', title: '指數函數', path: 'book3/unit5/', ready: true,
-          desc: '指數的推廣、指數函數圖形、方程式與不等式、指數模型；含心智圖與 57 張學習卡', cover: 'book3/unit5/assets/slides/slide01.jpg' },
+          desc: '指數的推廣、指數函數的圖形與性質、指數方程式與不等式、指數模型；含心智圖與 57 張學習卡', cover: 'book3/unit5/assets/slides/slide01.jpg' },
         { no: '單元六', title: '對數與對數律', path: 'book3/unit6/', ready: true,
-          desc: '對數的意義、對數律與換底公式、常用對數（首數與尾數）、對數的應用；含計算尺互動、心智圖與 66 張學習卡', cover: 'book3/unit6/assets/slides/slide01.jpg' }
+          desc: '對數的意義、對數律與換底公式、常用對數、對數的應用；含心智圖與 66 張學習卡', cover: 'book3/unit6/assets/slides/slide01.jpg' }
       ]
     }
   ]
