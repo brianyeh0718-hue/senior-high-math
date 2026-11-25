@@ -11,8 +11,9 @@
   --bg:#06142b; --panel:#0b2147; --panel2:#0f2c5c; --line:rgba(120,190,255,.18);
   --ink:#e8f1ff; --mute:#9fb6d9; --cyan:#36e0ff; --yellow:#ffd84d; --pink:#ff7aa8;
   --orange:#ff9f43; --green:#3ee08f; --red:#ff5a5a; --radius:16px;
-  --tools-w:300px;
+  --tools-w:250px; --rail-w:60px; --side:var(--tools-w);
 }
+body.tools-min{--side:var(--rail-w)}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{scroll-behavior:smooth}
@@ -23,6 +24,7 @@ body{
     linear-gradient(90deg,rgba(80,150,255,.07) 1px,transparent 1px);
   background-size:32px 32px;
   font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif; line-height:1.6;
+  padding-left:var(--side); transition:padding-left .2s;
 }
 button{font:inherit;color:inherit;cursor:pointer}
 input{font:inherit}
@@ -43,12 +45,6 @@ nav.top a b{color:var(--yellow);margin-right:6px}
 @media(max-width:700px){nav.top .in{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:8px 16px}nav.top .in::-webkit-scrollbar{display:none}nav.top a{white-space:nowrap}main{padding:8px 16px 80px}}
 
 main{max-width:1200px;margin:0 auto;padding:8px 24px 80px}
-@media(min-width:1180px){
-  body.tools-open main, body.tools-open nav.top .in, body.tools-open .hero-in{
-    margin-left:max(24px,calc((100vw - 1200px - var(--tools-w) - 40px)/2));
-    margin-right:calc(var(--tools-w) + 40px);
-  }
-}
 
 /* ---------- Units ---------- */
 .unit{scroll-margin-top:64px;padding:36px 0 12px;border-bottom:1px dashed var(--line)}
@@ -120,25 +116,10 @@ sup.ex{font-size:.72em;line-height:0;position:relative;top:-.05em;margin-left:.0
 .score{font-weight:700;color:var(--yellow)}
 
 /* ---------- YouTube ---------- */
-.yt-form{display:grid;grid-template-columns:2fr 1fr auto;gap:8px}
-@media(max-width:700px){.yt-form{grid-template-columns:1fr}}
-.yt-form input{padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:#06142b;color:var(--ink);min-width:0}
-.yt-form input:focus{outline:2px solid var(--cyan);border-color:transparent}
-.yt-msg{margin:6px 0;min-height:1.2em;font-size:14px;color:#ffb3b3}
-.yt-msg.ok{color:var(--green)}
 .yt-player{aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;border:1px solid var(--line)}
 .yt-player iframe{width:100%;height:100%;border:0;display:block}
-.yt-empty{height:100%;display:grid;place-content:center;text-align:center;color:var(--mute);font-size:20px}
-.yt-empty span{font-size:14px}
 .yt-bar{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:8px;flex-wrap:wrap}
 .yt-bar a{color:var(--cyan);font-size:14px}
-.yt-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-top:12px}
-.yt-item{position:relative;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:rgba(3,12,28,.5);cursor:pointer;text-align:left;padding:0}
-.yt-item.on{border-color:var(--cyan);box-shadow:0 0 0 2px var(--cyan)}
-.yt-item img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#000}
-.yt-item .t{display:block;padding:6px 8px;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.yt-del{position:absolute;top:4px;right:4px;width:26px;height:26px;border-radius:50%;border:none;background:rgba(6,20,43,.85);font-size:14px;line-height:1}
-.yt-del:hover{background:var(--red)}
 
 /* ---------- Review ---------- */
 .review-grid{display:grid;grid-template-columns:2fr 1fr;gap:18px;align-items:start}
@@ -156,15 +137,20 @@ video{width:100%;border-radius:12px;background:#000;display:block}
 @keyframes blink{50%{opacity:.25}}
 
 /* ---------- Tools panel ---------- */
-.tools{position:fixed;right:20px;top:50%;transform:translateY(-50%);width:var(--tools-w);z-index:1000;background:rgba(11,33,71,.97);border:1px solid rgba(54,224,255,.45);border-radius:18px;box-shadow:0 16px 50px rgba(0,0,0,.5);overflow:hidden}
-.tools-head{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:linear-gradient(90deg,#123a78,#0e2d5f);cursor:move;user-select:none;font-weight:700}
-.tools-head button{border:none;background:rgba(255,255,255,.12);border-radius:8px;width:30px;height:28px}
-.tools.min .tools-body{display:none}
-.tools.min{width:auto}
-.tools-body{padding:12px 14px 14px}
-.tool-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
-.tool-tabs button{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:7px 0;font-size:15px}
+/* 左側直式工具列：固定在左邊、整個高度；頁面內容用 body 的 padding-left 讓位，所以不會被遮住。
+   收合時變成 60px 寬的圖示列（body.tools-min）。 */
+.tools{position:fixed;left:0;top:0;bottom:0;width:var(--side);z-index:1000;background:rgba(11,33,71,.98);border-right:1px solid rgba(54,224,255,.45);box-shadow:4px 0 24px rgba(0,0,0,.35);display:flex;flex-direction:column;transition:width .2s}
+.tools-head{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:12px;background:linear-gradient(180deg,#123a78,#0e2d5f);user-select:none;font-weight:700;white-space:nowrap}
+.tools-head button{border:none;background:rgba(255,255,255,.14);border-radius:8px;width:34px;height:30px;font-size:16px;flex:none}
+.tools-body{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px 14px 16px}
+.tool-tabs{display:grid;grid-template-columns:1fr;gap:6px;margin-bottom:12px}
+.tool-tabs button{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:8px 10px;font-size:15px;display:flex;align-items:center;gap:8px;text-align:left;white-space:nowrap}
+.tool-tabs i{font-style:normal;font-size:20px;line-height:1}
 .tool-tabs button.on{background:var(--cyan);color:#06142b;font-weight:700;border-color:var(--cyan)}
+.tools.min .tools-head{justify-content:center;padding:12px 0}
+.tools.min .tools-head .lbl,.tools.min .tool-tabs span,.tools.min .tool-pane{display:none!important}
+.tools.min .tools-body{padding:10px 8px}
+.tools.min .tool-tabs button{justify-content:center;padding:10px 0}
 .tool-pane{display:none}.tool-pane.on{display:block}
 .trow{display:flex;gap:6px;align-items:center;margin:8px 0;flex-wrap:wrap}
 .trow input[type=number]{width:70px;padding:5px 8px;border-radius:8px;border:1px solid var(--line);background:#06142b;color:var(--ink)}
@@ -184,8 +170,8 @@ video{width:100%;border-radius:12px;background:#000;display:block}
 .sw.on{border-color:#fff;box-shadow:0 0 0 2px var(--cyan)}
 #ink{position:fixed;inset:0;z-index:900;pointer-events:none}
 #ink.active{pointer-events:auto;cursor:crosshair}
-body.inking .tools{box-shadow:0 0 0 3px var(--pink),0 16px 50px rgba(0,0,0,.5)}
-@media(max-width:700px){.tools{right:8px;width:min(260px,calc(100vw - 16px))}}
+body.inking .tools{box-shadow:inset 0 0 0 3px var(--pink),4px 0 24px rgba(0,0,0,.35)}
+@media(max-width:700px){:root{--tools-w:210px;--rail-w:52px}}
 .info-strip{margin-bottom:18px}
 .stack{display:grid;gap:18px;align-content:start}
 .info-strip .info-crop{max-width:1100px;margin:0 auto}
@@ -215,7 +201,7 @@ body.inking .tools{box-shadow:0 0 0 3px var(--pink),0 16px 50px rgba(0,0,0,.5)}
 @media(max-width:700px){.fc{height:320px}}
 </style>
 </head>
-<body class="tools-open">
+<body>
 
 <header class="hero">
   <div class="hero-in">
@@ -233,7 +219,6 @@ body.inking .tools{box-shadow:0 0 0 3px var(--pink),0 16px 50px rgba(0,0,0,.5)}
   <a href="#s4"><b>5-4</b>指數模型</a>
   <a href="#mind"><b>🧠</b>心智圖</a>
   <a href="#cards"><b>🃏</b>學習卡</a>
-  <a href="#yt"><b>▶</b>補充影片</a>
   <a href="#review"><b>★</b>總複習</a>
 </div></nav>
 
@@ -392,26 +377,6 @@ body.inking .tools{box-shadow:0 0 0 3px var(--pink),0 16px 50px rgba(0,0,0,.5)}
   </div></div>
 </section>
 
-<!-- ================= YouTube ================= -->
-<section class="unit" id="yt">
-  <div class="unit-head"><span class="tag">▶</span><div>
-    <h2>補充影片（YouTube）</h2>
-    <ul><li>貼上 YouTube 網址就能插入；支援 youtube.com/watch、youtu.be 短網址、Shorts，以及含開始時間（t=）的網址</li><li>插入過的影片會記在這台電腦的瀏覽器裡，下次開啟還在</li></ul>
-  </div></div>
-  <div class="card">
-    <div class="yt-form">
-      <input id="ytUrl" type="text" inputmode="url" placeholder="貼上 YouTube 網址，例如 https://www.youtube.com/watch?v=…" aria-label="YouTube 網址">
-      <input id="ytTitle" type="text" placeholder="影片標題（可不填）" aria-label="影片標題">
-      <button class="btn pri" id="ytAdd">＋ 插入影片</button>
-    </div>
-    <p class="yt-msg" id="ytMsg"></p>
-    <div class="yt-player" id="ytPlayer"><div class="yt-empty">尚未插入影片<br><span>在上方貼上 YouTube 網址後按「插入影片」</span></div></div>
-    <div class="yt-bar" id="ytBar" hidden><b id="ytNow"></b><a id="ytOpen" target="_blank" rel="noopener">在 YouTube 開啟 ↗</a></div>
-    <p class="hint" id="ytFileHint" hidden>若影片顯示「錯誤 153」或無法播放，是因為網頁是直接從檔案開啟；請按「在 YouTube 開啟」觀看。</p>
-    <div class="yt-list" id="ytList"></div>
-  </div>
-</section>
-
 <!-- ================= Review ================= -->
 <section class="unit" id="review">
   <div class="unit-head"><span class="tag">★</span><div>
@@ -433,10 +398,10 @@ body.inking .tools{box-shadow:0 0 0 3px var(--pink),0 16px 50px rgba(0,0,0,.5)}
 
 <!-- ================= Tools ================= -->
 <aside class="tools" id="tools">
-  <div class="tools-head" id="toolsHead"><span>🧰 教學工具</span><button id="toolsMin" title="收合 / 展開">—</button></div>
+  <div class="tools-head" id="toolsHead"><span class="lbl">🧰 教學工具</span><button id="toolsMin" title="收合成工具列">«</button></div>
   <div class="tools-body">
     <div class="tool-tabs">
-      <button class="on" data-t="lot">🎲 抽籤</button><button data-t="timer">⏱ 計時</button><button data-t="pen">✏️ 畫筆</button>
+      <button class="on" data-t="lot" title="抽籤"><i>🎲</i><span>抽籤</span></button><button data-t="timer" title="計時器"><i>⏱</i><span>計時</span></button><button data-t="pen" title="畫筆"><i>✏️</i><span>畫筆</span></button>
     </div>
 
     <div class="tool-pane on" data-p="lot">
@@ -790,7 +755,7 @@ function segTabs(root,cb){$$('button',root).forEach(b=>b.addEventListener('click
 })();
 
 /* ================= Mind map ================= */
-const MINDMAP={"name":"單元五 指數函數","children":[{"name":"5-1 指數的推廣與指數律","children":[{"name":"正整數指數","children":[{"name":"定義：底數與指數"},{"name":"指數律"}]},{"name":"零指數與負整數指數","children":[{"name":"a⁰ = 1（a ≠ 0）"},{"name":"a⁻ⁿ = 1/aⁿ（a ≠ 0）"},{"name":"讓指數律繼續成立"}]},{"name":"n 次方根與有理數指數","children":[{"name":"a^(1/n) = ⁿ√a"},{"name":"a^(m/n) = (ⁿ√a)ᵐ"},{"name":"底數限制：a \u003e 0"}]},{"name":"實數指數","children":[{"name":"用逼近（夾擠）來定義"}]},{"name":"常見迷思","children":[{"name":"負指數不是負數"},{"name":"指數律不適用於加法"},{"name":"√(a²) = |a|"}]}]},{"name":"5-2 指數函數的圖形與性質","children":[{"name":"定義","children":[{"name":"f(x) = aˣ（a \u003e 0，a ≠ 1）"},{"name":"定義域：所有實數"}]},{"name":"圖形特徵","children":[{"name":"必過定點 (0, 1)"},{"name":"值域：y \u003e 0"},{"name":"水平漸近線：y = 0（x 軸）"},{"name":"凹向上"}]},{"name":"單調性","children":[{"name":"a \u003e 1：嚴格遞增"},{"name":"0 \u003c a \u003c 1：嚴格遞減"}]},{"name":"平移與對稱","children":[{"name":"y = aˣ 與 y = (1/a)ˣ 對稱於 y 軸"},{"name":"平移：y = a^(x−h) + k"},{"name":"新的漸近線：y = k"}]}]},{"name":"5-3 大小比較、方程式與不等式","children":[{"name":"比較大小的方法","children":[{"name":"化同底數"},{"name":"化同指數"},{"name":"找中間值（例如 1）"},{"name":"同時乘方"}]},{"name":"指數方程式","children":[{"name":"化同底：a^f(x) = a^g(x) ⇒ f(x) = g(x)"},{"name":"換元：令 t = aˣ（t \u003e 0）"}]},{"name":"指數不等式","children":[{"name":"a \u003e 1：不等號方向不變"},{"name":"0 \u003c a \u003c 1：不等號反向"}]},{"name":"注意事項","children":[{"name":"換元後必須檢查 t \u003e 0"},{"name":"底數小於 1 時不等號反向"}]}]},{"name":"5-4 指數模型與生活應用","children":[{"name":"一般形式","children":[{"name":"y = A · bᵗ"},{"name":"b \u003e 1：指數成長"},{"name":"0 \u003c b \u003c 1：指數衰退"}]},{"name":"應用","children":[{"name":"倍增：y = A · 2^(t/T)"},{"name":"半衰期：y = A · (1/2)^(t/T)"},{"name":"複利：本利和 = P(1 + r)ⁿ"},{"name":"平均成長率的計算"}]},{"name":"線性成長 vs 指數成長","children":[{"name":"指數成長最後一定超越線性成長"}]}]}]};
+const MINDMAP={"name":"單元五 指數函數","children":[{"name":"5-1 指數的推廣與指數律","children":[{"name":"正整數指數","children":[{"name":"定義：底數與指數"},{"name":"指數律"}]},{"name":"零指數與負整數指數","children":[{"name":"a⁰ = 1（a ≠ 0）"},{"name":"a⁻ⁿ = 1/aⁿ（a ≠ 0）"},{"name":"讓指數律繼續成立"}]},{"name":"n 次方根與有理數指數","children":[{"name":"a^(1/n) = ⁿ√a"},{"name":"a^(m/n) = (ⁿ√a)ᵐ"},{"name":"底數限制：a \u003e 0"}]},{"name":"實數指數","children":[{"name":"用逼近（夾擠）來定義"}]},{"name":"常見迷思","children":[{"name":"負指數不是負數"},{"name":"指數律不適用於加法"},{"name":"√(a²) = |a|"}]}]},{"name":"5-2 指數函數的圖形與性質","children":[{"name":"定義","children":[{"name":"f(x) = aˣ（a \u003e 0，a ≠ 1）"},{"name":"定義域：所有實數"}]},{"name":"圖形特徵","children":[{"name":"必過定點 (0, 1)"},{"name":"值域：y \u003e 0"},{"name":"水平漸近線：y = 0（x 軸）"},{"name":"凹向上"}]},{"name":"單調性","children":[{"name":"a \u003e 1：嚴格遞增"},{"name":"0 \u003c a \u003c 1：嚴格遞減"}]},{"name":"平移與對稱","children":[{"name":"y = aˣ 與 y = (1/a)ˣ 對稱於 y 軸"},{"name":"平移：y = a^(x−h) + k"},{"name":"新的漸近線：y = k"}]}]},{"name":"5-3 大小比較、方程式與不等式","children":[{"name":"比較大小的方法","children":[{"name":"化同底數"},{"name":"化同指數"},{"name":"找中間值（例如 1）"},{"name":"同時乘方"}]},{"name":"指數方程式","children":[{"name":"化同底：a^(f(x)) = a^(g(x)) ⇒ f(x) = g(x)"},{"name":"換元：令 t = aˣ（t \u003e 0）"}]},{"name":"指數不等式","children":[{"name":"a \u003e 1：不等號方向不變"},{"name":"0 \u003c a \u003c 1：不等號反向"}]},{"name":"注意事項","children":[{"name":"換元後必須檢查 t \u003e 0"},{"name":"底數小於 1 時不等號反向"}]}]},{"name":"5-4 指數模型與生活應用","children":[{"name":"一般形式","children":[{"name":"y = A · bᵗ"},{"name":"b \u003e 1：指數成長"},{"name":"0 \u003c b \u003c 1：指數衰退"}]},{"name":"應用","children":[{"name":"倍增：y = A · 2^(t/T)"},{"name":"半衰期：y = A · (1/2)^(t/T)"},{"name":"複利：本利和 = P(1 + r)ⁿ"},{"name":"平均成長率的計算"}]},{"name":"線性成長 vs 指數成長","children":[{"name":"指數成長最後一定超越線性成長"}]}]}]};
 (function(){
   const box=$('#mindmap');if(!MINDMAP){box.textContent='（心智圖資料尚未載入）';return;}
   const esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML;};
@@ -859,14 +824,15 @@ const CARDS=CARDS_RAW.map(c=>({f:tex2u(c.f),b:tex2u(c.b)}));
 /* ================= Tools panel ================= */
 (function(){
   const tools=$('#tools'),head=$('#toolsHead');
-  if(innerWidth<760){tools.classList.add('min');$('#toolsMin').textContent='＋';document.body.classList.remove('tools-open');}
-  $$('.tool-tabs button').forEach(b=>b.onclick=()=>{$$('.tool-tabs button').forEach(x=>x.classList.toggle('on',x===b));$$('.tool-pane').forEach(p=>p.classList.toggle('on',p.dataset.p===b.dataset.t));});
-  $('#toolsMin').onclick=e=>{e.stopPropagation();tools.classList.toggle('min');$('#toolsMin').textContent=tools.classList.contains('min')?'＋':'—';document.body.classList.toggle('tools-open',!tools.classList.contains('min')&&!tools.dataset.moved);};
-  head.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;const r=tools.getBoundingClientRect(),ox=e.clientX-r.left,oy=e.clientY-r.top;head.setPointerCapture(e.pointerId);
-    const mv=ev=>{tools.style.transform='none';tools.style.right='auto';tools.style.left=clamp(ev.clientX-ox,0,innerWidth-r.width)+'px';tools.style.top=clamp(ev.clientY-oy,0,innerHeight-40)+'px';
-      if(!tools.dataset.moved){tools.dataset.moved=1;document.body.classList.remove('tools-open');}};
-    const up=()=>{head.removeEventListener('pointermove',mv);head.removeEventListener('pointerup',up);};
-    head.addEventListener('pointermove',mv);head.addEventListener('pointerup',up);});
+  /* 收合／展開：收合時只剩左側圖示列，頁面內容自動讓位（body.tools-min） */
+  const MINKEY='lesson-tools-min';
+  function setMin(m){tools.classList.toggle('min',m);document.body.classList.toggle('tools-min',m);
+    const b=$('#toolsMin');b.textContent=m?'»':'«';b.title=m?'展開教學工具':'收合成工具列';
+    try{localStorage.setItem(MINKEY,m?'1':'0');}catch(e){}}
+  let saved=null;try{saved=localStorage.getItem(MINKEY);}catch(e){}
+  setMin(saved!==null?saved==='1':innerWidth<900);
+  $$('.tool-tabs button').forEach(b=>b.onclick=()=>{$$('.tool-tabs button').forEach(x=>x.classList.toggle('on',x===b));$$('.tool-pane').forEach(p=>p.classList.toggle('on',p.dataset.p===b.dataset.t));if(tools.classList.contains('min'))setMin(false);});
+  $('#toolsMin').onclick=e=>{e.stopPropagation();setMin(!tools.classList.contains('min'));};
 
   /* big overlay */
   const big=$('#bigShow');let bigMode=null;
@@ -936,53 +902,6 @@ const CARDS=CARDS_RAW.map(c=>({f:tex2u(c.f),b:tex2u(c.b)}));
   addEventListener('keydown',e=>{if(e.key==='Escape'){if(active)setActive(false);lb.classList.remove('on');big.classList.remove('on','alarm');bigMode=null;}
     if((e.ctrlKey||e.metaKey)&&e.key==='z'&&active){strokes.pop();redraw();e.preventDefault();}});
   size();
-})();
-
-/* ================= YouTube ================= */
-(function(){
-  const KEY='math3-u5-youtube';let list=[],cur=-1;
-  try{list=JSON.parse(localStorage.getItem(KEY)||'[]')||[];}catch(e){list=[];}
-  const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(list));}catch(e){}};
-  const msg=(s,ok)=>{const m=$('#ytMsg');m.textContent=s;m.classList.toggle('ok',!!ok);};
-  function parseT(t){if(/^\d+$/.test(t))return +t;const m=String(t).match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/);return m?(+(m[1]||0))*3600+(+(m[2]||0))*60+(+(m[3]||0)):0;}
-  function parseYT(raw){const u=raw.trim();if(!u)return null;let id=null,start=0;
-    try{const url=new URL(/^https?:\/\//i.test(u)?u:'https://'+u);const h=url.hostname.toLowerCase().replace(/^(www\.|m\.|music\.)/,'');
-      if(h==='youtu.be')id=url.pathname.split('/')[1];
-      else if(h==='youtube.com'||h==='youtube-nocookie.com'){id=url.searchParams.get('v');
-        if(!id){const m=url.pathname.match(/^\/(?:embed|shorts|live|v)\/([\w-]{11})/);if(m)id=m[1];}}
-      const t=url.searchParams.get('t')||url.searchParams.get('start');if(t)start=parseT(t);
-    }catch(e){}
-    if(!id&&/^[\w-]{11}$/.test(u))id=u;
-    return id&&/^[\w-]{11}$/.test(id)?{id,start}:null;}
-  function play(i){cur=i;const v=list[i];const p=$('#ytPlayer');
-    if(!v){p.innerHTML='<div class="yt-empty">尚未插入影片<br><span>在上方貼上 YouTube 網址後按「插入影片」</span></div>';$('#ytBar').hidden=true;$('#ytFileHint').hidden=true;renderList();return;}
-    p.innerHTML='';const f=document.createElement('iframe');
-    f.src=`https://www.youtube.com/embed/${v.id}?rel=0&playsinline=1${v.start?'&start='+v.start:''}`;
-    f.title=v.title||'YouTube 影片';f.allow='accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
-    f.allowFullscreen=true;f.referrerPolicy='strict-origin-when-cross-origin';p.appendChild(f);
-    $('#ytBar').hidden=false;$('#ytNow').textContent=v.title||'YouTube 影片';
-    $('#ytOpen').href=`https://www.youtube.com/watch?v=${v.id}${v.start?'&t='+v.start+'s':''}`;
-    $('#ytFileHint').hidden=location.protocol!=='file:';renderList();}
-  function renderList(){const box=$('#ytList');box.innerHTML='';
-    list.forEach((v,i)=>{const b=document.createElement('div');b.className='yt-item'+(i===cur?' on':'');b.tabIndex=0;b.setAttribute('role','button');
-      const img=document.createElement('img');img.src=`https://i.ytimg.com/vi/${v.id}/mqdefault.jpg`;img.alt='';img.loading='lazy';
-      const t=document.createElement('span');t.className='t';t.textContent=(i+1)+'. '+(v.title||'YouTube 影片');
-      const d=document.createElement('button');d.className='yt-del';d.title='移除';d.textContent='✕';
-      d.onclick=e=>{e.stopPropagation();if(!confirm('要從清單移除「'+(v.title||'YouTube 影片')+'」嗎？'))return;list.splice(i,1);save();
-        if(cur===i)play(list.length?0:-1);else{if(cur>i)cur--;renderList();}};
-      b.onclick=()=>play(i);b.onkeydown=e=>{if(e.key==='Enter')play(i);};
-      b.append(img,t,d);box.appendChild(b);});}
-  function add(){const r=parseYT($('#ytUrl').value);
-    if(!r){msg('看不出這是 YouTube 影片網址，請確認後再貼一次（例如 https://youtu.be/xxxxxxxxxxx）。');return;}
-    const title=$('#ytTitle').value.trim()||`影片 ${list.length+1}`;
-    const dup=list.findIndex(v=>v.id===r.id&&v.start===r.start);
-    if(dup>=0){play(dup);msg('這部影片已經在清單裡，已切換過去。',true);}
-    else{list.push({id:r.id,start:r.start,title});save();play(list.length-1);msg('已插入影片！',true);}
-    $('#ytUrl').value='';$('#ytTitle').value='';}
-  $('#ytAdd').onclick=add;
-  ['ytUrl','ytTitle'].forEach(id=>$('#'+id).addEventListener('keydown',e=>{if(e.key==='Enter')add();}));
-  window.__parseYT=parseYT;
-  if(list.length)play(0);else renderList();
 })();
 
 /* ================= Superscript exponents =================
