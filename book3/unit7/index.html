@@ -1,0 +1,1062 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>對數函數｜單元七</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#06142b; --panel:#0b2147; --panel2:#0f2c5c; --line:rgba(120,190,255,.18);
+  --ink:#e8f1ff; --mute:#9fb6d9; --cyan:#36e0ff; --yellow:#ffd84d; --pink:#ff7aa8;
+  --orange:#ff9f43; --green:#3ee08f; --red:#ff5a5a; --radius:16px;
+  --tools-w:250px; --rail-w:60px; --side:var(--tools-w);
+}
+body.tools-min{--side:var(--rail-w)}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{
+  margin:0; color:var(--ink); background-color:var(--bg);
+  background-image:
+    linear-gradient(rgba(80,150,255,.07) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(80,150,255,.07) 1px,transparent 1px);
+  background-size:32px 32px;
+  font-family:"Noto Sans TC","Microsoft JhengHei",system-ui,sans-serif; line-height:1.6;
+  padding-left:var(--side); transition:padding-left .2s;
+}
+button{font:inherit;color:inherit;cursor:pointer}
+input{font:inherit}
+
+/* ---------- Hero & nav ---------- */
+.hero{position:relative;min-height:340px;display:flex;align-items:flex-end;overflow:hidden;border-bottom:1px solid var(--line)}
+.hero::before{content:"";position:absolute;inset:0;background:url(assets/slides/slide01.jpg) center 85%/cover;opacity:.45;-webkit-mask-image:linear-gradient(180deg,#000 45%,transparent 75%);mask-image:linear-gradient(180deg,#000 45%,transparent 75%)}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(6,20,43,.1),rgba(6,20,43,.95))}
+.hero-in{position:relative;z-index:1;padding:40px 24px 28px;max-width:1200px;width:100%;margin:0 auto}
+.kicker{color:var(--cyan);font-weight:700;letter-spacing:.12em;font-size:14px}
+.hero h1{margin:6px 0 4px;font-size:clamp(32px,5vw,56px);font-weight:900;letter-spacing:.04em;text-shadow:0 0 24px rgba(54,224,255,.35)}
+.hero p{margin:0;color:var(--mute);font-size:17px}
+nav.top{position:sticky;top:0;z-index:50;background:rgba(6,20,43,.88);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+nav.top .in{max-width:1200px;margin:0 auto;padding:10px 24px;display:flex;gap:8px;flex-wrap:wrap}
+nav.top a{color:var(--ink);text-decoration:none;padding:6px 14px;border-radius:999px;border:1px solid var(--line);font-size:15px;background:var(--panel)}
+nav.top a:hover,nav.top a.on{border-color:var(--cyan);color:var(--cyan)}
+nav.top a b{color:var(--yellow);margin-right:6px}
+@media(max-width:700px){nav.top .in{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding:8px 16px}nav.top .in::-webkit-scrollbar{display:none}nav.top a{white-space:nowrap}main{padding:8px 16px 80px}}
+
+main{max-width:1200px;margin:0 auto;padding:8px 24px 80px}
+
+/* ---------- Units ---------- */
+.unit{scroll-margin-top:64px;padding:36px 0 12px;border-bottom:1px dashed var(--line)}
+.unit-head{display:flex;gap:16px;align-items:flex-start;margin-bottom:18px}
+.tag{flex:none;font-weight:900;font-size:22px;color:#06142b;background:var(--yellow);border-radius:12px;padding:6px 12px;box-shadow:0 0 18px rgba(255,216,77,.35)}
+.unit-head h2{margin:0;font-size:clamp(24px,3vw,32px);line-height:1.25}
+.unit-head ul{margin:6px 0 0;padding-left:20px;color:var(--mute)}
+.unit-head li{margin:2px 0}
+.grid-a{display:grid;grid-template-columns:3fr 1fr;gap:18px;align-items:start}
+.grid-b{display:grid;grid-template-columns:1.35fr 1fr;gap:18px;margin-top:18px;align-items:start}
+@media(max-width:900px){.grid-a,.grid-b{grid-template-columns:1fr}}
+.card{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:var(--radius);padding:14px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.card h3{margin:0 0 10px;font-size:16px;color:var(--cyan);display:flex;align-items:center;gap:8px;letter-spacing:.05em}
+.card h3 .n{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--cyan);color:#06142b;font-size:13px;font-weight:900}
+
+/* ---------- Carousel ---------- */
+.carousel{outline:none}
+.car-stage{position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;touch-action:pan-y}
+.car-stage img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;opacity:0;transition:opacity .45s;user-select:none;-webkit-user-drag:none}
+.car-stage img.on{opacity:1}
+.car-btn{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:64px;border:none;border-radius:10px;background:rgba(6,20,43,.6);font-size:34px;line-height:1;opacity:.75}
+.car-btn:hover{opacity:1;background:rgba(54,224,255,.35)}
+.car-btn.prev{left:8px}.car-btn.next{right:8px}
+.car-fs{position:absolute;top:8px;right:8px;border:none;border-radius:8px;background:rgba(6,20,43,.6);padding:4px 10px;font-size:18px}
+.car-stage:fullscreen{border-radius:0}
+.car-bar{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.dots{display:flex;gap:6px}
+.dot{width:12px;height:12px;border-radius:50%;border:none;background:rgba(159,182,217,.35);padding:0}
+.dot.on{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+.count{color:var(--mute);font-size:14px}
+
+/* ---------- Infographic crop ---------- */
+.info-crop{width:100%;border-radius:12px;background-repeat:no-repeat;cursor:zoom-in;border:1px solid var(--line);background-color:#f6f3ec;transition:transform .2s}
+.info-crop:hover{transform:scale(1.02)}
+.cap{color:var(--mute);font-size:13px;margin-top:6px;text-align:center}
+
+/* ---------- Interactive ---------- */
+.viz svg{width:100%;height:auto;display:block;background:rgba(3,12,28,.55);border-radius:12px;border:1px solid var(--line);touch-action:none}
+.viz .lbl{fill:var(--ink);font-size:15px;font-weight:700;paint-order:stroke;stroke:#06142b;stroke-width:4px}
+.viz .sm{font-size:13px;font-weight:500}
+sup.ex{font-size:.72em;line-height:0;position:relative;top:-.05em;margin-left:.04em;font-weight:inherit}
+.handle{cursor:grab;fill:#fff;stroke:var(--cyan);stroke-width:3}
+.handle:hover{fill:var(--cyan)}
+.readout{margin-top:10px;background:rgba(3,12,28,.55);border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:16px}
+.readout .big{font-size:20px;font-weight:700}
+.y{color:var(--yellow)}.c{color:var(--cyan)}.p{color:var(--pink)}.o{color:var(--orange)}.g{color:var(--green)}.r{color:var(--red)}
+.seg{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.seg button,.btn{border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:5px 14px;font-size:14px}
+.seg button.on,.btn.pri{background:var(--cyan);color:#06142b;border-color:var(--cyan);font-weight:700}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.ctrl{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;margin-top:10px;font-size:15px}
+.ctrl input[type=range]{accent-color:var(--cyan);width:150px;vertical-align:middle}
+.hint{color:var(--mute);font-size:13px;margin:6px 0 0}
+
+/* ---------- Quiz ---------- */
+.q{padding:10px 0;border-bottom:1px dashed var(--line)}
+.qt{margin:0 0 8px;font-size:16px}
+.qt b{color:var(--yellow);margin-right:4px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.opt{text-align:left;border:1px solid var(--line);background:rgba(3,12,28,.5);border-radius:10px;padding:7px 10px;font-size:15px;display:flex;gap:8px;align-items:center}
+.opt span{display:inline-grid;place-items:center;flex:none;width:22px;height:22px;border-radius:6px;background:var(--panel2);font-size:12px;font-weight:700}
+.opt:hover{border-color:var(--cyan)}
+.answered .opt{cursor:default}
+.opt.right{border-color:var(--green);background:rgba(62,224,143,.18)}
+.opt.wrong{border-color:var(--red);background:rgba(255,90,90,.18)}
+.exp{margin:6px 0 0;font-size:14px;display:none}
+.exp.ok{display:block;color:var(--green)}.exp.no{display:block;color:#ffb3b3}
+.q-foot{display:flex;justify-content:space-between;align-items:center;padding-top:10px}
+.score{font-weight:700;color:var(--yellow)}
+
+/* ---------- YouTube ---------- */
+.yt-player{aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;border:1px solid var(--line)}
+.yt-player iframe{width:100%;height:100%;border:0;display:block}
+.yt-bar{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.yt-bar a{color:var(--cyan);font-size:14px}
+
+/* ---------- Review ---------- */
+.review-grid{display:grid;grid-template-columns:2fr 1fr;gap:18px;align-items:start}
+@media(max-width:900px){.review-grid{grid-template-columns:1fr}}
+.full-info{width:100%;border-radius:12px;cursor:zoom-in;display:block}
+video{width:100%;border-radius:12px;background:#000;display:block}
+
+/* ---------- Lightbox / big overlay ---------- */
+.overlay{position:fixed;inset:0;z-index:2000;background:rgba(2,8,20,.88);display:none;place-items:center;padding:20px}
+.overlay.on{display:grid}
+.overlay img{max-width:96vw;max-height:94vh;border-radius:10px}
+#bigShow .bignum{font-size:min(38vw,60vh);font-weight:900;line-height:1;color:var(--yellow);text-shadow:0 0 60px rgba(255,216,77,.5);font-variant-numeric:tabular-nums}
+#bigShow .bigsub{text-align:center;color:var(--mute);font-size:22px;margin-top:10px}
+#bigShow.alarm .bignum{color:var(--red);animation:blink .5s steps(2) infinite}
+@keyframes blink{50%{opacity:.25}}
+
+/* ---------- Tools panel ---------- */
+/* 左側直式工具列：固定在左邊、整個高度；頁面內容用 body 的 padding-left 讓位，所以不會被遮住。
+   收合時變成 60px 寬的圖示列（body.tools-min）。 */
+.tools{position:fixed;left:0;top:0;bottom:0;width:var(--side);z-index:1000;background:rgba(11,33,71,.98);border-right:1px solid rgba(54,224,255,.45);box-shadow:4px 0 24px rgba(0,0,0,.35);display:flex;flex-direction:column;transition:width .2s}
+.tools-head{display:flex;justify-content:space-between;align-items:center;gap:6px;padding:12px;background:linear-gradient(180deg,#123a78,#0e2d5f);user-select:none;font-weight:700;white-space:nowrap}
+.tools-head button{border:none;background:rgba(255,255,255,.14);border-radius:8px;width:34px;height:30px;font-size:16px;flex:none}
+.tools-body{flex:1;overflow-y:auto;overflow-x:hidden;padding:12px 14px 16px}
+.tool-tabs{display:grid;grid-template-columns:1fr;gap:6px;margin-bottom:12px}
+.tool-tabs button{border:1px solid var(--line);background:var(--panel);border-radius:10px;padding:8px 10px;font-size:15px;display:flex;align-items:center;gap:8px;text-align:left;white-space:nowrap}
+.tool-tabs i{font-style:normal;font-size:20px;line-height:1}
+.tool-tabs button.on{background:var(--cyan);color:#06142b;font-weight:700;border-color:var(--cyan)}
+.tools.min .tools-head{justify-content:center;padding:12px 0}
+.tools.min .tools-head .lbl,.tools.min .tool-tabs span,.tools.min .tool-pane{display:none!important}
+.tools.min .tools-body{padding:10px 8px}
+.tools.min .tool-tabs button{justify-content:center;padding:10px 0}
+.tool-pane{display:none}.tool-pane.on{display:block}
+.trow{display:flex;gap:6px;align-items:center;margin:8px 0;flex-wrap:wrap}
+.trow input[type=number]{width:70px;padding:5px 8px;border-radius:8px;border:1px solid var(--line);background:#06142b;color:var(--ink)}
+.tbtn{flex:1;border:1px solid var(--line);background:var(--panel2);border-radius:10px;padding:7px 4px;font-size:14px}
+.tbtn.on{border-color:var(--cyan);color:var(--cyan)}
+.tbig{width:100%;border:none;border-radius:12px;padding:10px;font-size:17px;font-weight:900;background:linear-gradient(90deg,var(--yellow),#ffb84d);color:#06142b;margin:6px 0}
+.tbig.stop{background:linear-gradient(90deg,var(--pink),var(--red));color:#fff}
+.lot-num{text-align:center;font-size:72px;font-weight:900;color:var(--yellow);line-height:1.1;font-variant-numeric:tabular-nums;min-height:80px}
+.lot-hist{display:flex;flex-wrap:wrap;gap:4px;min-height:24px;font-size:13px}
+.lot-hist span{background:var(--panel2);border-radius:6px;padding:1px 7px}
+.lot-info{font-size:13px;color:var(--mute)}
+.chk{font-size:14px;display:flex;gap:6px;align-items:center}
+.timer-disp{text-align:center;font-size:64px;font-weight:900;font-variant-numeric:tabular-nums;color:var(--cyan);line-height:1.15}
+.timer-disp.alarm{color:var(--red);animation:blink .5s steps(2) infinite}
+.swatches{display:flex;gap:8px;margin:8px 0}
+.sw{width:30px;height:30px;border-radius:50%;border:3px solid transparent;padding:0}
+.sw.on{border-color:#fff;box-shadow:0 0 0 2px var(--cyan)}
+#ink{position:fixed;inset:0;z-index:900;pointer-events:none}
+#ink.active{pointer-events:auto;cursor:crosshair}
+body.inking .tools{box-shadow:inset 0 0 0 3px var(--pink),4px 0 24px rgba(0,0,0,.35)}
+@media(max-width:700px){:root{--tools-w:210px;--rail-w:52px}}
+.info-strip{margin-bottom:18px}
+.stack{display:grid;gap:18px;align-content:start}
+.info-strip .info-crop{max-width:1100px;margin:0 auto}
+/* ---------- Mind map ---------- */
+.mm-root{text-align:center;margin:0 auto 16px;max-width:420px;padding:12px 18px;border-radius:14px;background:linear-gradient(90deg,#36e0ff,#7aa8ff);color:#06142b;font-weight:900;font-size:22px;box-shadow:0 0 24px rgba(54,224,255,.35)}
+.mm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.mm-br{border:1px solid var(--line);border-top:4px solid var(--bc);border-radius:14px;background:rgba(3,12,28,.5);padding:10px 12px}
+.mm-br h4{margin:0 0 8px;color:var(--bc);font-size:17px}
+.mm-br details{margin:6px 0;border-left:2px solid var(--bc);padding-left:10px}
+.mm-br summary{cursor:pointer;font-weight:700;font-size:15px;list-style:none}
+.mm-br summary::-webkit-details-marker{display:none}
+.mm-br summary::before{content:'▸ ';color:var(--bc)}
+.mm-br details[open]>summary::before{content:'▾ '}
+.mm-leaf{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 4px}
+.mm-leaf span{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:3px 9px;font-size:14px}
+/* ---------- Flashcards ---------- */
+.fc-wrap{max-width:760px;margin:0 auto}
+.fc{perspective:1200px;cursor:pointer;height:280px;outline:none}
+.fc-in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.fc.flip .fc-in{transform:rotateY(180deg)}
+.fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:16px;display:grid;place-items:center;padding:24px 28px;text-align:center;font-size:clamp(18px,2.6vw,26px);font-weight:700;line-height:1.5;overflow:auto}
+.fc-front{background:linear-gradient(160deg,#123a78,#0b2147);border:2px solid var(--cyan)}
+.fc-back{background:linear-gradient(160deg,#1b4d3a,#0b2a24);border:2px solid var(--green);transform:rotateY(180deg);font-weight:500}
+.fc-tag{position:absolute;top:10px;left:14px;font-size:13px;color:var(--mute);font-weight:500}
+.fc-bar{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;align-items:center;margin-top:12px}
+.chk2{font-size:14px;display:inline-flex;gap:6px;align-items:center;color:var(--mute)}
+.chk2 input{accent-color:var(--cyan)}
+.yt-wait{border:1px dashed var(--line);border-radius:12px;padding:26px 18px;text-align:center;color:var(--mute);background:rgba(3,12,28,.45);line-height:1.8}
+.fc-stat{color:var(--mute);font-size:14px;text-align:center;margin-top:8px}
+@media(max-width:700px){.fc{height:320px}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-in">
+    <div class="kicker">高中數學 第三冊（龍騰版數學 A）· 單元七</div>
+    <h1>對數函數</h1>
+    <p>7-1 定義與圖形 ｜ 7-2 與指數函數的關係 ｜ 7-3 性質與大小比較 ｜ 7-4 不等式與圖形的應用</p>
+  </div>
+</header>
+
+<nav class="top"><div class="in">
+  <a href="../" title="回到第三冊目錄"><b>⌂</b>第三冊</a>
+  <a href="#s1"><b>7-1</b>定義與圖形</a>
+  <a href="#s2"><b>7-2</b>與指數函數的關係</a>
+  <a href="#s3"><b>7-3</b>大小比較</a>
+  <a href="#s4"><b>7-4</b>不等式與應用</a>
+  <a href="#mind"><b>🧠</b>心智圖</a>
+  <a href="#cards"><b>🃏</b>學習卡</a>
+  <a href="#review"><b>★</b>總複習</a>
+</div></nav>
+
+<main>
+
+<!-- ================= 7-1 ================= -->
+<section class="unit" id="s1">
+  <div class="unit-head"><span class="tag">7-1</span><div>
+    <h2>對數函數的定義與圖形</h2>
+    <ul><li>y = logₐx（a &gt; 0，a ≠ 1）：定義域 x &gt; 0、值域全體實數；必過 (1, 0) 與 (a, 1)，y 軸是漸近線</li><li>a &gt; 1 遞增、0 &lt; a &lt; 1 遞減；越長越慢：x 變 2 倍，log₂x 才加 1</li></ul>
+  </div></div>
+  <div class="card info-strip"><h3><span class="n">4</span>資訊圖表重點</h3><div class="info-crop" data-crop="s1" style="max-width:900px" role="img" aria-label="資訊圖表：對數函數的圖形"></div><div class="cap">點一下放大全圖</div></div>
+  <div class="grid-b">
+    <div class="card viz"><h3><span class="n">2</span>互動視覺化：底數決定圖形</h3>
+      <div class="seg" id="v1base"><button data-a="2" class="on">底數 2</button><button data-a="3">3</button><button data-a="10">10</button><button data-a="0.5">1/2</button><button data-a="0.3333333333333333">1/3</button><button data-a="1">1 ?</button></div>
+      <svg id="v1" viewBox="0 0 520 320"></svg>
+      <div class="ctrl">
+        <label>底數 a = <b id="v1av" class="c"></b> <input type="range" id="v1a" min="0.1" max="6" step="0.05" value="2"></label>
+        <label class="chk2"><input type="checkbox" id="v1mir"> 對照 y = log<sub>1/a</sub>x</label>
+        <label class="chk2"><input type="checkbox" id="v1dbl" checked> 顯示「x 變 2 倍」</label>
+      </div>
+      <div class="readout" id="v1out"></div>
+      <p class="hint">拉底數滑桿：a 經過 1 時圖形「翻面」，但永遠通過 (1, 0)、不會碰到 y 軸。沿曲線拖曳白點，看 x 變 2 倍時 y 只增加固定的 logₐ2。</p>
+    </div>
+    <div class="stack">
+      <div class="card"><h3><span class="n">1</span>NotebookLM 簡報</h3><div class="carousel" data-slides="2,3,4"></div></div>
+      <div class="card"><h3><span class="n">3</span>隨堂評量</h3><div class="quiz" data-quiz="s1"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 7-2 ================= -->
+<section class="unit" id="s2">
+  <div class="unit-head"><span class="tag">7-2</span><div>
+    <h2>對數函數與指數函數的關係、圖形變換</h2>
+    <ul><li>y = aˣ 與 y = logₐx 互為反函數，圖形對稱於直線 y = x：點 (p, q) ⇔ 點 (q, p)，定義域與值域互換</li><li>y = logₐ(x − h) + k：右移 h、上移 k，漸近線變成 x = h、定義域 x &gt; h</li></ul>
+  </div></div>
+  <div class="card info-strip"><h3><span class="n">4</span>資訊圖表重點</h3><div class="info-crop" data-crop="s2" style="max-width:900px" role="img" aria-label="資訊圖表：與指數函數的關係"></div><div class="cap">點一下放大全圖</div></div>
+  <div class="grid-b">
+    <div class="card viz"><h3><span class="n">2</span>互動視覺化</h3>
+      <div class="seg" id="v2tabs"><button class="on" data-m="inv">鏡子 y = x：反函數</button><button data-m="shift">平移與鏡射實驗室</button></div>
+      <div class="seg" id="v2base"><button data-a="2" class="on">底數 2</button><button data-a="3">3</button><button data-a="0.5">1/2</button><button data-a="0.0625" id="v2b16">1/16</button></div>
+      <svg id="v2" viewBox="0 0 520 320"></svg>
+      <div id="v2ctrlB" hidden>
+        <div class="ctrl">
+          <label>h = <b id="v2hv" class="y"></b> <input type="range" id="v2h" min="-4" max="4" step="0.5" value="1"></label>
+          <label>k = <b id="v2kv" class="y"></b> <input type="range" id="v2k" min="-3" max="3" step="0.5" value="2"></label>
+        </div>
+        <div class="seg" id="v2ref" style="margin-top:10px"><button data-r="0" class="on">不鏡射</button><button data-r="1">對 x 軸鏡射（−logₐx）</button><button data-r="2">對 y 軸鏡射（logₐ(−x)）</button></div>
+        <div class="seg" id="v2pre"><button data-p="2,1,2,0">log₂(x − 1) + 2</button><button data-p="3,-2,-1,0">log₃(x + 2) − 1</button><button data-p="2,0,0,1">−log₂x</button><button data-p="2,0,0,2">log₂(−x)</button></div>
+      </div>
+      <div class="readout" id="v2out"></div>
+      <p class="hint" id="v2hint">沿橘色曲線 y = aˣ 拖曳白點 P，青色曲線 y = logₐx 上會出現坐標對調的點 Q：P、Q 對稱於直線 y = x。</p>
+    </div>
+    <div class="stack">
+      <div class="card"><h3><span class="n">1</span>NotebookLM 簡報</h3><div class="carousel" data-slides="5,6,7"></div></div>
+      <div class="card"><h3><span class="n">3</span>隨堂評量</h3><div class="quiz" data-quiz="s2"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 7-3 ================= -->
+<section class="unit" id="s3">
+  <div class="unit-head"><span class="tag">7-3</span><div>
+    <h2>對數函數的性質與大小比較</h2>
+    <ul><li>同底看單調性；先與 0、1 比較分成三群；同真數用換底；必要時找 3/2 之類的數夾在中間</li><li>單調函數在閉區間的最大值、最小值出現在端點；令 t = logₐx 時要換範圍</li></ul>
+  </div></div>
+  <div class="card info-strip"><h3><span class="n">4</span>資訊圖表重點</h3><div class="info-crop" data-crop="s3" style="max-width:520px" role="img" aria-label="資訊圖表：性質與大小比較"></div><div class="cap">點一下放大全圖</div></div>
+  <div class="grid-b">
+    <div class="card viz"><h3><span class="n">2</span>互動視覺化</h3>
+      <div class="seg" id="v3tabs"><button class="on" data-m="line">大小比較排排站</button><button data-m="ext">閉區間的最大值與最小值</button></div>
+      <div class="seg" id="v3sets"><button class="on" data-s="0">例 2</button><button data-s="1">例 3</button><button data-s="2">例 4（夾 3/2）</button><button data-s="3">例 5（同真數）</button><button data-s="4">log₄5 與 log₅4</button></div>
+      <div class="seg" id="v3exb" hidden><button data-a="2" class="on">y = log₂x</button><button data-a="0.5">y = log<sub>1/2</sub>x</button><button data-a="3">y = log₃x</button></div>
+      <svg id="v3" viewBox="0 0 520 320"></svg>
+      <div class="ctrl" id="v3ctrlA"><button class="btn pri" id="v3reveal">揭曉位置</button><span class="hint" style="margin:0">先讓學生猜順序，再按揭曉</span></div>
+      <div id="v3ctrlB" hidden>
+        <div class="ctrl">
+          <label>左端點 p = <b id="v3pv" class="o"></b> <input type="range" id="v3p" min="0" max="10" step="1" value="1"></label>
+          <label>右端點 q = <b id="v3qv" class="g"></b> <input type="range" id="v3q" min="0" max="10" step="1" value="10"></label>
+        </div>
+        <div class="seg" id="v3pre" style="margin-top:10px"><button data-p="2,1,10">例 6(1)：log₂x，1/2 ≤ x ≤ 8</button><button data-p="0.5,0,10">評量 8：log<sub>1/2</sub>x，1/4 ≤ x ≤ 8</button></div>
+      </div>
+      <div class="readout" id="v3out"></div>
+      <p class="hint" id="v3hint">數線分成三區：紅色是負數、黃色是 0 到 1、綠色是大於 1。先判斷每個數在哪一區，同一區再細比。</p>
+    </div>
+    <div class="stack">
+      <div class="card"><h3><span class="n">1</span>NotebookLM 簡報</h3><div class="carousel" data-slides="8,9,10"></div></div>
+      <div class="card"><h3><span class="n">3</span>隨堂評量</h3><div class="quiz" data-quiz="s3"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 7-4 ================= -->
+<section class="unit" id="s4">
+  <div class="unit-head"><span class="tag">7-4</span><div>
+    <h2>對數不等式與圖形的應用</h2>
+    <ul><li>解對數不等式：先寫真數 &gt; 0，化同底後用單調性去掉 log（底數 0 &lt; a &lt; 1 要變號），最後取交集</li><li>方程式的實根個數＝兩圖形的交點個數；半對數圖把指數成長 y = k·aˣ 畫成直線</li></ul>
+  </div></div>
+  <div class="card info-strip"><h3><span class="n">4</span>資訊圖表重點</h3><div class="info-crop" data-crop="s4" style="max-width:520px" role="img" aria-label="資訊圖表：不等式與應用"></div><div class="cap">點一下放大全圖</div></div>
+  <div class="grid-b">
+    <div class="card viz"><h3><span class="n">2</span>互動視覺化</h3>
+      <div class="seg" id="v4tabs"><button class="on" data-m="cross">交點個數＝實根個數</button><button data-m="semi">半對數圖</button></div>
+      <div id="v4ctrlA">
+        <div class="seg" id="v4base"><button data-a="2" class="on">y = log₂x</button><button data-a="3">y = log₃x</button><button data-a="0.5">y = log<sub>1/2</sub>x</button></div>
+      </div>
+      <svg id="v4" viewBox="0 0 520 320"></svg>
+      <div id="v4ctrlA2">
+        <div class="ctrl">
+          <label>斜率 m = <b id="v4mv" class="y"></b> <input type="range" id="v4m" min="-3" max="3" step="0.25" value="-1"></label>
+          <label>截距 c = <b id="v4cv" class="y"></b> <input type="range" id="v4c" min="-4" max="6" step="0.25" value="3"></label>
+        </div>
+        <div class="seg" id="v4pre" style="margin-top:10px"><button data-p="2,-1,3">log₂x = −x + 3</button><button data-p="2,1,-1">log₂x = x − 1</button><button data-p="2,1,0">log₂x = x</button><button data-p="0.5,1,0">log<sub>1/2</sub>x = x</button><button data-p="3,-1,4">log₃x = 4 − x</button></div>
+      </div>
+      <div id="v4ctrlB" hidden>
+        <div class="ctrl">
+          <label>初始量 k = <b id="v4kv" class="y"></b> <input type="range" id="v4k" min="1" max="10" step="1" value="3"></label>
+          <label>倍率 a = <b id="v4av" class="c"></b> <input type="range" id="v4a" min="1.1" max="3" step="0.1" value="2"></label>
+        </div>
+        <div class="seg" id="v4scale" style="margin-top:10px"><button data-s="lin">縱軸：一般刻度</button><button data-s="log" class="on">縱軸：對數刻度（半對數圖）</button></div>
+      </div>
+      <div class="readout" id="v4out"></div>
+      <p class="hint" id="v4hint">調整直線 y = mx + c，看它和對數曲線有幾個交點：交點的 x 坐標就是方程式的實根。一增一減最多一個交點；對數曲線彎彎的，和直線可能有 0、1 或 2 個交點。</p>
+    </div>
+    <div class="stack">
+      <div class="card"><h3><span class="n">1</span>NotebookLM 簡報</h3><div class="carousel" data-slides="11,12,13"></div></div>
+      <div class="card"><h3><span class="n">3</span>隨堂評量</h3><div class="quiz" data-quiz="s4"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= Mind map ================= -->
+<section class="unit" id="mind">
+  <div class="unit-head"><span class="tag">🧠</span><div>
+    <h2>單元心智圖</h2>
+    <ul><li>NotebookLM 產生的概念架構（中文版）：點小標題可展開或收合</li><li>上課可先全部收合，請學生猜每個分支下面有什麼，再逐一打開</li></ul>
+  </div></div>
+  <div class="card">
+    <div class="fc-bar" style="justify-content:flex-start;margin:0 0 12px"><button class="btn pri" id="mmOpen">全部展開</button><button class="btn" id="mmClose">全部收合</button></div>
+    <div id="mindmap"></div>
+  </div>
+</section>
+
+<!-- ================= Flashcards ================= -->
+<section class="unit" id="cards">
+  <div class="unit-head"><span class="tag">🃏</span><div>
+    <h2>學習卡</h2>
+    <ul><li>點卡片（或按空白鍵）翻面看答案；← → 切換上一張、下一張</li><li>標記「我會了／再複習」，可以只練還不熟的卡片；標記只存在這台電腦的瀏覽器</li></ul>
+  </div></div>
+  <div class="card"><div class="fc-wrap">
+    <div class="seg" id="fcFilter"><button class="on" data-f="all">全部</button><button data-f="todo">只練「再複習」與未標記</button></div>
+    <div class="fc" id="fc" tabindex="0" role="button" aria-label="學習卡，點一下翻面"><div class="fc-in">
+      <div class="fc-face fc-front"><span class="fc-tag" id="fcTagF"></span><div id="fcFront"></div></div>
+      <div class="fc-face fc-back"><span class="fc-tag" id="fcTagB"></span><div id="fcBack"></div></div>
+    </div></div>
+    <div class="fc-bar">
+      <button class="btn" id="fcPrev">‹ 上一張</button><button class="btn pri" id="fcFlip">翻面</button><button class="btn" id="fcNext">下一張 ›</button>
+      <button class="btn" id="fcShuffle">🔀 洗牌</button>
+    </div>
+    <div class="fc-bar">
+      <button class="btn" id="fcKnow" style="border-color:var(--green)">✔ 我會了</button><button class="btn" id="fcAgain" style="border-color:var(--orange)">↻ 再複習</button><button class="btn" id="fcReset">清除標記</button>
+    </div>
+    <div class="fc-stat" id="fcStat"></div>
+  </div></div>
+</section>
+
+<!-- ================= Review ================= -->
+<section class="unit" id="review">
+  <div class="unit-head"><span class="tag">★</span><div>
+    <h2>總複習</h2>
+    <ul><li>封面、單元重點總整理、形成性評量 10 題（附答案）、NotebookLM 教學影片，以及完整資訊圖表（含常見錯誤）</li></ul>
+  </div></div>
+  <div class="review-grid">
+    <div>
+      <div class="card"><h3><span class="n">1</span>NotebookLM 簡報：重點總整理與形成性評量</h3><div class="carousel" data-slides="1,14,15,16"></div></div>
+      <div class="card" style="margin-top:18px"><h3><span class="n">▶</span>NotebookLM 教學影片</h3>
+        <!--YOUTUBE-->
+        <div class="yt-player"><iframe src="https://www.youtube.com/embed/s0fwBdluEKU?rel=0&amp;playsinline=1" title="解鎖對數函數：從摺紙到資料科學" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>
+        <div class="yt-bar"><span class="hint" style="margin:0">若無法播放，請改在 YouTube 觀看</span><a href="https://youtu.be/s0fwBdluEKU" target="_blank" rel="noopener">在 YouTube 開啟 ↗</a></div>
+        <!--/YOUTUBE-->
+      </div>
+    </div>
+    <div class="card"><h3><span class="n">4</span>完整資訊圖表</h3><img class="full-info" src="assets/infographic.jpg" alt="對數函數完整資訊圖表"><div class="cap">點一下放大</div></div>
+  </div>
+</section>
+</main>
+
+<!-- ================= Tools ================= -->
+<aside class="tools" id="tools">
+  <div class="tools-head" id="toolsHead"><span class="lbl">🧰 教學工具</span><button id="toolsMin" title="收合成工具列">«</button></div>
+  <div class="tools-body">
+    <div class="tool-tabs">
+      <button class="on" data-t="lot" title="抽籤"><i>🎲</i><span>抽籤</span></button><button data-t="timer" title="計時器"><i>⏱</i><span>計時</span></button><button data-t="pen" title="畫筆"><i>✏️</i><span>畫筆</span></button>
+    </div>
+
+    <div class="tool-pane on" data-p="lot">
+      <div class="trow">座號 <input type="number" id="lotFrom" value="1" min="1"> 到 <input type="number" id="lotTo" value="30" min="1"></div>
+      <label class="chk"><input type="checkbox" id="lotNoRep" checked> 抽過的不重複</label>
+      <div class="lot-num" id="lotNum">?</div>
+      <button class="tbig" id="lotGo">🎲 開始抽籤</button>
+      <div class="lot-info" id="lotInfo">已抽：</div>
+      <div class="lot-hist" id="lotHist"></div>
+      <div class="trow"><button class="tbtn" id="lotReset">清除紀錄</button><label class="chk" style="flex:1"><input type="checkbox" id="lotBig" checked> 放大顯示</label></div>
+    </div>
+
+    <div class="tool-pane" data-p="timer">
+      <div class="timer-disp" id="tDisp">03:00</div>
+      <div class="trow">
+        <button class="tbtn" data-s="30">30秒</button><button class="tbtn" data-s="60">1分</button><button class="tbtn" data-s="180">3分</button><button class="tbtn" data-s="300">5分</button><button class="tbtn" data-s="600">10分</button>
+      </div>
+      <div class="trow">
+        <button class="tbtn" data-d="-60">−1分</button><button class="tbtn" data-d="-10">−10秒</button><button class="tbtn" data-d="10">+10秒</button><button class="tbtn" data-d="60">+1分</button>
+      </div>
+      <button class="tbig" id="tStart">▶ 開始</button>
+      <div class="trow"><button class="tbtn" id="tReset">↺ 重設</button><button class="tbtn" id="tBig">⛶ 放大</button><label class="chk"><input type="checkbox" id="tSound" checked> 鈴聲</label></div>
+    </div>
+
+    <div class="tool-pane" data-p="pen">
+      <button class="tbig" id="penToggle">✏️ 開始畫筆</button>
+      <div class="swatches" id="penColors"></div>
+      <div class="trow">粗細 <input type="range" id="penSize" min="2" max="24" value="5" style="flex:1;accent-color:var(--cyan)"></div>
+      <div class="trow" id="penModes"><button class="tbtn on" data-m="pen">畫筆</button><button class="tbtn" data-m="hl">螢光筆</button><button class="tbtn" data-m="er">橡皮擦</button></div>
+      <div class="trow"><button class="tbtn" id="penUndo">↶ 復原</button><button class="tbtn" id="penClear">🗑 全部清除</button></div>
+      <p class="hint">畫的內容會跟著頁面捲動。按 Esc 結束畫筆。</p>
+    </div>
+  </div>
+</aside>
+
+<canvas id="ink"></canvas>
+<div class="overlay" id="lightbox"><img alt="放大圖"></div>
+<div class="overlay" id="bigShow"><div><div class="bignum" id="bigNum"></div><div class="bigsub" id="bigSub">點任意處關閉</div></div></div>
+
+<script>
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const NS='http://www.w3.org/2000/svg';
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+function txt(g,x,y,s,cls='lbl',anchor='middle'){const t=el('text',{x,y,class:cls,'text-anchor':anchor,'dominant-baseline':'middle'},g);t.textContent=s;return t;}
+const D=Math.PI/180;
+function norm(d){while(d<=-Math.PI)d+=2*Math.PI;while(d>Math.PI)d-=2*Math.PI;return d;}
+function arcD(P,Q,R,r,sector){const a1=Math.atan2(Q.y-P.y,Q.x-P.x);const d=norm(Math.atan2(R.y-P.y,R.x-P.x)-a1);const a2=a1+d;
+  const x1=P.x+r*Math.cos(a1),y1=P.y+r*Math.sin(a1),x2=P.x+r*Math.cos(a2),y2=P.y+r*Math.sin(a2);
+  const s=`A${r},${r} 0 0 ${d>0?1:0} ${x2.toFixed(1)},${y2.toFixed(1)}`;
+  return sector?`M${P.x},${P.y} L${x1.toFixed(1)},${y1.toFixed(1)} ${s} Z`:`M${x1.toFixed(1)},${y1.toFixed(1)} ${s}`;}
+function midDir(P,Q,R){const a1=Math.atan2(Q.y-P.y,Q.x-P.x);return a1+norm(Math.atan2(R.y-P.y,R.x-P.x)-a1)/2;}
+function ang(P,Q,R){return Math.abs(norm(Math.atan2(Q.y-P.y,Q.x-P.x)-Math.atan2(R.y-P.y,R.x-P.x)))/D;}
+function dist(P,Q){return Math.hypot(P.x-Q.x,P.y-Q.y);}
+function svgPt(svg,e){const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse());}
+function drag(svg,h,onMove){h.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();h.setPointerCapture(e.pointerId);
+  const mv=ev=>onMove(svgPt(svg,ev));const up=()=>{h.removeEventListener('pointermove',mv);h.removeEventListener('pointerup',up);};
+  h.addEventListener('pointermove',mv);h.addEventListener('pointerup',up);});}
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const f0=v=>Math.round(v), f1=v=>(Math.round(v*10)/10).toString();
+
+/* ================= Carousel ================= */
+function buildCarousel(root){
+  const ids=root.dataset.slides.split(',').map(Number);
+  root.innerHTML=`<div class="car-stage">${ids.map((n,i)=>`<img src="assets/slides/slide${String(n).padStart(2,'0')}.jpg" alt="簡報第 ${n} 頁" class="${i?'':'on'}" draggable="false">`).join('')}
+    <button class="car-btn prev" aria-label="上一張">‹</button><button class="car-btn next" aria-label="下一張">›</button>
+    <button class="car-fs" title="全螢幕播放">⛶</button></div>
+    <div class="car-bar"><div class="dots">${ids.map((n,i)=>`<button class="dot ${i?'':'on'}" aria-label="第 ${i+1} 張"></button>`).join('')}</div><span class="count">1 / ${ids.length}</span></div>`;
+  let i=0;const st=$('.car-stage',root),imgs=$$('img',root),dots=$$('.dot',root),cnt=$('.count',root);
+  const go=k=>{i=(k+ids.length)%ids.length;imgs.forEach((im,j)=>im.classList.toggle('on',j===i));dots.forEach((d,j)=>d.classList.toggle('on',j===i));cnt.textContent=`${i+1} / ${ids.length}`;};
+  $('.prev',root).onclick=()=>go(i-1);$('.next',root).onclick=()=>go(i+1);
+  dots.forEach((d,j)=>d.onclick=()=>go(j));
+  root.tabIndex=0;
+  const key=e=>{if(e.key==='ArrowLeft'){go(i-1);e.preventDefault();}if(e.key==='ArrowRight'){go(i+1);e.preventDefault();}};
+  root.addEventListener('keydown',key);
+  document.addEventListener('keydown',e=>{if(document.fullscreenElement===st)key(e);});
+  $('.car-fs',root).onclick=()=>{document.fullscreenElement?document.exitFullscreen():st.requestFullscreen&&st.requestFullscreen();};
+  let sx=null;st.addEventListener('pointerdown',e=>{if(!e.target.closest('button'))sx=e.clientX;});
+  st.addEventListener('pointerup',e=>{if(sx!==null&&Math.abs(e.clientX-sx)>50)go(i+(e.clientX<sx?1:-1));sx=null;});
+}
+$$('.carousel').forEach(buildCarousel);
+
+/* ================= Infographic crops ================= */
+const IW=1536,IH=2752;
+const CROPS={s1:[30,186,1476,722],s2:[30,936,1476,680],s3:[22,1628,738,716],s4:[776,1628,742,716]};
+const lb=$('#lightbox');
+function openLB(src){$('img',lb).src=src;lb.classList.add('on');}
+lb.onclick=()=>lb.classList.remove('on');
+$$('.info-crop').forEach(r=>{const[x,y,w,h]=CROPS[r.dataset.crop];
+  r.style.aspectRatio=`${w}/${h}`;r.style.backgroundImage='url(assets/infographic.jpg)';
+  r.style.backgroundSize=`${IW/w*100}% auto`;r.style.backgroundPosition=`${x/(IW-w)*100}% ${y/(IH-h)*100}%`;
+  r.onclick=()=>openLB('assets/infographic.jpg');});
+$('.full-info').onclick=()=>openLB('assets/infographic.jpg');
+
+/* ================= Quiz ================= */
+const QUIZ={
+ s1:[
+  {q:'函數 y = log₂(x + 1) 的定義域是？',o:['x > 1','x > −1','x ≥ −1','全體實數'],a:1,e:'真數必須大於 0：x + 1 > 0，所以 x > −1。等號不能取，因為真數不能是 0。'},
+  {q:'對數函數 y = logₐx 的圖形通過點 (16, 2)，則 a = ？',o:['2','4','8','32'],a:1,e:'logₐ16 = 2 ⇒ a² = 16，又 a > 0，所以 a = 4。'},
+  {q:'關於 y = log<sub>1/3</sub>x 的圖形，下列何者正確？',o:['通過點 (0, 1)','是遞增函數','通過點 (3, −1)','值域是 y > 0'],a:2,e:'以 1/3 為底 3 的對數是 −1（因為 (1/3)⁻¹ = 3），所以通過 (3, −1)。對數函數通過 (1, 0) 不是 (0, 1)；底數小於 1 是遞減；值域是全體實數。'},
+  {q:'x 從 8 變成 16，log₂x 增加多少？',o:['1','2','8','16'],a:0,e:'log₂16 − log₂8 = 4 − 3 = 1。x 變 2 倍，log₂x 只加 1：對數函數越長越慢。'}],
+ s2:[
+  {q:'點 (2, 9) 在 y = 3ˣ 的圖形上，下列哪一點一定在 y = log₃x 的圖形上？',o:['(9, 2)','(2, 9)','(−2, 9)','(9, −2)'],a:0,e:'3² = 9 ⇔ log₃9 = 2：把坐標對調，(9, 2) 在 y = log₃x 上。兩圖形對稱於直線 y = x。'},
+  {q:'y = log₂(x + 3) − 1 的漸近線是？',o:['x = 3','x = −3','y = −1','x = 1'],a:1,e:'把 y = log₂x 向左平移 3、向下平移 1，漸近線從 x = 0 移到 x = −3。上下平移不會改變漸近線。'},
+  {q:'y = log₂(x − 1) 的圖形，是把 y = log₂x 的圖形怎麼移動？',o:['向左平移 1','向右平移 1','向上平移 1','向下平移 1'],a:1,e:'x = 1 時括號裡才是 0，漸近線從 x = 0 移到 x = 1，所以是向右平移 1。「減 1 就往左」是常見誤解。'},
+  {q:'y = 2ˣ 與 y = log₂x 的圖形有幾個交點？',o:['0 個','1 個','2 個','無限多個'],a:0,e:'y = 2ˣ 永遠在直線 y = x 上方，y = log₂x 永遠在下方，所以沒有交點。對稱於 y = x 不代表一定相交。'}],
+ s3:[
+  {q:'設 a = log₃5、b = log₃0.5、c = log<sub>1/3</sub>0.5，由大到小排列為？',o:['a > b > c','a > c > b','c > a > b','b > c > a'],a:1,e:'a：5 > 3，所以 a > 1。b：0.5 < 1 且底數大於 1，所以 b < 0。c：底數和真數都小於 1，且 1/3 < 0.5 < 1，所以 0 < c < 1（約 0.631）。因此 a > c > b。'},
+  {q:'y = log<sub>1/2</sub>x 在 2 ≤ x ≤ 16 的最大值是？',o:['−1','−4','1','4'],a:0,e:'底數 1/2 小於 1，遞減，最大值在左端點 x = 2：以 1/2 為底 2 的對數 = −1。最小值在 x = 16，是 −4。'},
+  {q:'比較 log₅3、log₆3、log₇3 的大小。',o:['log₅3 > log₆3 > log₇3','log₇3 > log₆3 > log₅3','log₆3 > log₅3 > log₇3','三者相等'],a:0,e:'換底：log₅3 = 1 ÷ log₃5、log₆3 = 1 ÷ log₃6、log₇3 = 1 ÷ log₃7。分母 log₃5 < log₃6 < log₃7 都是正數，取倒數順序相反，所以 log₅3 > log₆3 > log₇3。'},
+  {q:'令 t = log₂x，若 2 ≤ x ≤ 32，則 t 的範圍是？',o:['2 ≤ t ≤ 32','1 ≤ t ≤ 5','0 ≤ t ≤ 5','1 ≤ t ≤ 32'],a:1,e:'log₂2 = 1、log₂32 = 5，且 y = log₂x 遞增，所以 1 ≤ t ≤ 5。換元後一定要換範圍。'}],
+ s4:[
+  {q:'解 log₃(x − 2) < 2。',o:['x < 11','2 < x < 11','x > 11','2 < x < 9'],a:1,e:'定義範圍 x − 2 > 0，x > 2。log₃(x − 2) < log₃9，底數 3 > 1，所以 x − 2 < 9，x < 11。取交集：2 < x < 11。'},
+  {q:'解 log<sub>1/2</sub>(x + 1) > −3。',o:['x > 7','−1 < x < 7','x < 7','x > −1'],a:1,e:'定義範圍 x + 1 > 0，x > −1。−3 等於以 1/2 為底 8 的對數，底數小於 1，去掉 log 要變號：x + 1 < 8，x < 7。取交集：−1 < x < 7。'},
+  {q:'方程式 log₂x = 6 − x 有幾個實根？',o:['0 個','恰 1 個，x = 4','2 個，x = 2 和 x = 4','恰 1 個，x = 2'],a:1,e:'左邊遞增、右邊遞減，最多一個交點。代 x = 4：log₂4 = 2，6 − 4 = 2，成立。所以恰有 1 個實根 x = 4。'},
+  {q:'某組資料畫在半對數圖（縱軸是 log y）上是一條直線，斜率是 log 2，代表什麼？',o:['x 每加 1，y 加 2','x 每加 1，y 變 2 倍','x 每加 1，y 加 log 2','資料是線性成長'],a:1,e:'log y = log k + x log 2 ⇒ y = k · 2ˣ，x 每加 1，y 乘 2。半對數圖上的直線代表指數成長，不是線性成長。'}]
+};
+function buildQuiz(root){
+  const qs=QUIZ[root.dataset.quiz];let score=0,done=0;
+  root.innerHTML=qs.map((it,k)=>`<div class="q" data-k="${k}"><p class="qt"><b>Q${k+1}</b>${it.q}</p><div class="opts">${it.o.map((o,j)=>`<button class="opt" data-j="${j}"><span>${'ABCD'[j]}</span>${o}</button>`).join('')}</div><p class="exp"></p></div>`).join('')
+    +`<div class="q-foot"><span class="score">得分 0 / ${qs.length}</span><button class="btn" data-reset>重新作答</button></div>`;
+  $$('.q',root).forEach(qd=>{const it=qs[qd.dataset.k];
+    $$('.opt',qd).forEach(b=>b.onclick=()=>{if(qd.classList.contains('answered'))return;qd.classList.add('answered');
+      const ok=+b.dataset.j===it.a;b.classList.add(ok?'right':'wrong');$$('.opt',qd)[it.a].classList.add('right');
+      const ex=$('.exp',qd);ex.textContent=(ok?'✔ 答對了！':'✘ 正解是 '+'ABCD'[it.a]+'。')+' '+it.e;ex.classList.add(ok?'ok':'no');
+      if(ok)score++;done++;$('.score',root).textContent=`得分 ${score} / ${qs.length}`+(done===qs.length&&score===qs.length?'  🎉 全對！':'');});});
+  $('[data-reset]',root).onclick=()=>buildQuiz(root);
+}
+$$('.quiz').forEach(buildQuiz);
+/* ================= Plot helpers ================= */
+let CLIPN=0;
+function mkPlot(svg,x0,x1,y0,y1,opt={}){
+  const W=520,H=320,L=opt.L??34,R=opt.R??14,T=opt.T??14,B=opt.B??26;
+  const X=x=>L+(x-x0)/(x1-x0)*(W-L-R), Y=y=>H-B-(y-y0)/(y1-y0)*(H-T-B);
+  const IX=px=>x0+(px-L)/(W-L-R)*(x1-x0);
+  const id='clip'+(++CLIPN);
+  const defs=el('defs',{},svg);const cp=el('clipPath',{id},defs);el('rect',{x:L,y:T,width:W-L-R,height:H-T-B},cp);
+  return {X,Y,IX,x0,x1,y0,y1,L,R,T,B,W,H,clip:`url(#${id})`};
+}
+function drawAxes(g,P,xs,ys,xlab=v=>fmtN(v),ylab=v=>fmtN(v)){
+  const ticks=(a,b,s)=>{const r=[];for(let v=Math.ceil(a/s-1e-9)*s;v<=b+1e-9;v+=s)r.push(+v.toFixed(10));return r;};
+  for(const v of ticks(P.x0,P.x1,xs))el('line',{x1:P.X(v),y1:P.T,x2:P.X(v),y2:P.H-P.B,stroke:'rgba(120,190,255,.12)'},g);
+  for(const v of ticks(P.y0,P.y1,ys))el('line',{x1:P.L,y1:P.Y(v),x2:P.W-P.R,y2:P.Y(v),stroke:'rgba(120,190,255,.12)'},g);
+  const ax=P.y0<=0&&P.y1>=0?P.Y(0):P.H-P.B, ay=P.x0<=0&&P.x1>=0?P.X(0):P.L;
+  el('line',{x1:P.L,y1:ax,x2:P.W-P.R,y2:ax,stroke:'#9fb6d9','stroke-width':1.5},g);
+  el('line',{x1:ay,y1:P.T,x2:ay,y2:P.H-P.B,stroke:'#9fb6d9','stroke-width':1.5},g);
+  for(const v of ticks(P.x0,P.x1,xs)){if(Math.abs(v)<1e-12&&ay!==P.L)continue;txt(g,P.X(v),Math.min(ax+13,P.H-8),xlab(v),'lbl sm');}
+  for(const v of ticks(P.y0,P.y1,ys)){if(Math.abs(v)<1e-12&&ax!==P.H-P.B)continue;txt(g,ay-5,P.Y(v),ylab(v),'lbl sm','end');}
+}
+function curve(g,P,f,attrs,n=240){let d='',pen=false;
+  for(let i=0;i<=n;i++){const x=P.x0+(P.x1-P.x0)*i/n,y=f(x);
+    if(!isFinite(y)){pen=false;continue;}const yy=clamp(P.Y(y),-2000,2000);d+=(pen?'L':'M')+P.X(x).toFixed(1)+','+yy.toFixed(1);pen=true;}
+  return el('path',Object.assign({d,fill:'none','clip-path':P.clip},attrs),g);}
+function fmtN(v,dg=4){if(!isFinite(v))return '—';const a=Math.abs(v);
+  if(a!==0&&(a>=1e7||a<1e-4))return v.toExponential(3).replace('e+',' × 10^').replace('e-',' × 10^-');
+  return (+v.toFixed(dg)).toLocaleString('en-US',{maximumFractionDigits:dg});}
+function sup(n){const m={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};return String(n).split('').map(c=>m[c]||c).join('');}
+const gcd=(a,b)=>b?gcd(b,a%b):Math.abs(a);
+function segTabs(root,cb){$$('button',root).forEach(b=>b.addEventListener('click',()=>{$$('button',root).forEach(x=>x.classList.toggle('on',x===b));cb(b);}));}
+/* 4 位小數，至少留 2 位（30.10、0.95） */
+function f4(v){let s=v.toFixed(4).replace(/0+$/,'');const d=s.split('.')[1]||'';if(d.length<2)s=v.toFixed(2);return mn(s);}
+/* ================= 單元七共用 ================= */
+const SUBD={'0':'₀','1':'₁','2':'₂','3':'₃','4':'₄','5':'₅','6':'₆','7':'₇','8':'₈','9':'₉'};
+const mn=s=>String(s).replace(/-/g,'−');
+const LN=(b,x)=>Math.log(x)/Math.log(b);
+/* 底數名稱：1/2、1/3、1/16 顯示成分數 */
+function bName(a){const F=[[0.5,'1/2'],[1/3,'1/3'],[0.25,'1/4'],[0.2,'1/5'],[0.0625,'1/16']];for(const[v,s]of F)if(Math.abs(a-v)<1e-6)return s;return mn(+a.toFixed(2));}
+const bP=a=>{const s=bName(a);return s.includes('/')?'('+s+')':s;};
+const isIntB=a=>Math.abs(a-Math.round(a))<1e-9&&a>=2&&a<=99;
+/* HTML 用：log₂、log<sub>1/2</sub> */
+const logH=a=>isIntB(a)?'log'+String(Math.round(a)).split('').map(c=>SUBD[c]).join(''):'log<sub>'+bName(a)+'</sub>';
+/* SVG 用：_{…} 會畫成下標 */
+const logS=a=>isIntB(a)?'log'+String(Math.round(a)).split('').map(c=>SUBD[c]).join(''):'log_{'+bName(a)+'}';
+function txtR(g,x,y,s,cls='lbl',anchor='middle'){
+  const t=el('text',{x,y,class:cls,'text-anchor':anchor,'dominant-baseline':'middle'},g);
+  s.split(/(_\{[^}]*\})/).forEach(part=>{if(!part)return;const ts=el('tspan',{},t);
+    if(part.startsWith('_{')){ts.setAttribute('baseline-shift','sub');ts.setAttribute('font-size','72%');ts.textContent=part.slice(2,-1);}else ts.textContent=part;});
+  return t;}
+/* 在漸近線 x = h 的一側畫曲線，靠近漸近線的地方取樣比較密 */
+function domCurve(g,P,f,h,side,attrs){
+  let d='',pen=false;const far=side>0?P.x1:P.x0;if((far-h)*side<=0)return;
+  for(let i=1;i<=500;i++){const t=i/500,x=h+(far-h)*t*t*t,y=f(x);
+    if(!isFinite(y)){pen=false;continue;}d+=(pen?'L':'M')+P.X(x).toFixed(1)+','+clamp(P.Y(y),-2000,2000).toFixed(1);pen=true;}
+  return el('path',Object.assign({d,fill:'none','clip-path':P.clip},attrs),g);}
+const r2=v=>mn(fmtN(v,2)), r3=v=>mn(fmtN(v,3));
+function niceX(v){for(const d of[1,2,4,8,16]){const n=Math.round(v*d);if(Math.abs(v*d-n)<1e-6)return d===1?mn(n):mn(n)+'/'+d;}return r3(v);}
+const argP=v=>{const s=niceX(v);return s.includes('/')?'('+s+')':s;};
+function dot(g,P,x,y,col,r=6){return el('circle',{cx:P.X(x),cy:P.Y(y),r,fill:col,stroke:'#06142b','stroke-width':2},g);}
+
+/* ================= V1: 底數決定圖形 ================= */
+(function(){
+  const svg=$('#v1'),out=$('#v1out');let a=2,xp=1.5;
+  const P=mkPlot(svg,-1,9,-4,4);const layer=el('g',{},svg),hg=el('g',{},svg);
+  const as=$('#v1a'),mir=$('#v1mir'),dbl=$('#v1dbl');
+  const hd=el('circle',{r:9,class:'handle'},hg);
+  drag(svg,hd,p=>{xp=clamp(Math.round(P.IX(p.x)*20)/20,0.25,4.25);draw();});
+  function draw(){
+    $('#v1av').textContent=bName(a);
+    layer.innerHTML='';drawAxes(layer,P,1,1,v=>mn(v),v=>mn(v));
+    el('line',{x1:P.X(0),y1:P.T,x2:P.X(0),y2:P.H-P.B,stroke:'#ff5a5a','stroke-width':2.5,'stroke-dasharray':'7 5'},layer);
+    txt(layer,P.X(0)+8,P.T+12,'漸近線 x = 0','lbl sm','start');
+    if(Math.abs(a-1)<1e-9){
+      hd.style.display='none';
+      txt(layer,300,P.Y(2.6),'底數 1：1ˣ 永遠等於 1，畫不出對數函數','lbl');
+      out.innerHTML=`<div class="big r">底數 a = 1 不行</div><div>1 的任何次方都是 1：「1 的幾次方是 5」沒有答案，「1 的幾次方是 1」有無限多個答案。所以對數函數規定 <b class="y">a &gt; 0 且 a ≠ 1</b>。</div>`;return;}
+    hd.style.display='';
+    const f=x=>LN(a,x);
+    if(mir.checked){domCurve(layer,P,x=>-f(x),0,1,{stroke:'#ff7aa8','stroke-width':2.5,'stroke-dasharray':'8 5'});
+      txtR(layer,P.X(8.6),P.Y(-f(8.6))+(a>1?-14:14),'y = '+logS(1/a)+'x','lbl sm','end');}
+    domCurve(layer,P,f,0,1,{stroke:'#36e0ff','stroke-width':3.5});
+    txtR(layer,P.X(8.6),clamp(P.Y(f(8.6))+(a>1?16:-16),P.T+12,P.H-P.B-10),'y = '+logS(a)+'x','lbl','end');
+    dot(layer,P,1,0,'#ffd84d',6);txt(layer,P.X(1)+6,P.Y(0)+(a>1?16:-14),'(1, 0)','lbl sm','start');
+    if(a<=8.9&&a>=0.05){dot(layer,P,a,1,'#ff9f43',6);el('line',{x1:P.X(a),y1:P.Y(1),x2:P.X(a),y2:P.Y(0),stroke:'#ff9f43','stroke-dasharray':'3 4'},layer);
+      txt(layer,P.X(a)+(a<1?-8:8),P.Y(1)-14,'(a, 1)','lbl sm',a<1?'end':'start');}
+    const yp=f(xp);
+    if(dbl.checked){const x2=2*xp,y2=f(x2);
+      el('line',{x1:P.X(xp),y1:P.Y(yp),x2:P.X(x2),y2:P.Y(yp),stroke:'#ffd84d','stroke-width':2,'stroke-dasharray':'5 4','clip-path':P.clip},layer);
+      el('line',{x1:P.X(x2),y1:P.Y(yp),x2:P.X(x2),y2:P.Y(y2),stroke:'#3ee08f','stroke-width':3,'clip-path':P.clip},layer);
+      dot(layer,P,x2,y2,'#3ee08f',6);}
+    hd.setAttribute('cx',P.X(xp));hd.setAttribute('cy',clamp(P.Y(yp),P.T,P.H-P.B));
+    txt(layer,P.X(5),P.T+12,`白點：x = ${r2(xp)}，y = ${r3(yp)}`,'lbl sm','middle');
+    const inc=a>1,d2=LN(a,2);
+    out.innerHTML=`<div class="big">y = ${logH(a)}x　<span class="${inc?'g':'o'}">${inc?'a &gt; 1：嚴格遞增（左下往右上）':'0 &lt; a &lt; 1：嚴格遞減（左上往右下）'}</span></div>`+
+      `<div>定義域 x &gt; 0、值域全體實數；必過 <span class="y">(1, 0)</span> 與 <span class="o">(${bName(a)}, 1)</span>；y 軸是漸近線。</div>`+
+      (dbl.checked?`<div><span class="g">x 從 ${r2(xp)} 變成 ${r2(2*xp)}（2 倍）</span>：y 從 ${r3(yp)} 變成 ${r3(LN(a,2*xp))}，只${d2>0?'增加':'減少'} ${r3(Math.abs(d2))}（固定是 ${logH(a)}2，不管白點在哪裡）。</div>`:'')+
+      (mir.checked?`<div class="p">粉紅虛線 y = ${logH(1/a)}x = −${logH(a)}x，和青色曲線對稱於 x 軸。</div>`:'');
+  }
+  as.oninput=()=>{a=+as.value;$$('#v1base button').forEach(x=>x.classList.remove('on'));draw();};
+  segTabs($('#v1base'),btn=>{a=+btn.dataset.a;as.value=a;draw();});
+  mir.onchange=draw;dbl.onchange=draw;
+  draw();
+})();
+
+/* ================= V2: 反函數 / 平移鏡射 ================= */
+(function(){
+  const svg=$('#v2'),out=$('#v2out');let mode='inv',a=2,p=1,h=1,k=2,ref=0;
+  /* 反函數模式用等比例坐標，對稱才看得出來 */
+  const PI=mkPlot(svg,-3,10.5,-2,6),PS=mkPlot(svg,-5,9,-5,5),PZ=mkPlot(svg,-0.15,1.2,-0.15,0.65);
+  const layer=el('g',{},svg),hg=el('g',{},svg);
+  const hd=el('circle',{r:9,class:'handle'},hg);
+  /* 底數 1/16 時三個交點擠在原點附近，改用放大的坐標 */
+  const zoom=()=>a<0.1;
+  drag(svg,hd,pt=>{if(mode!=='inv')return;
+    if(zoom()){p=clamp(Math.round(PZ.IX(pt.x)*100)/100,0.17,0.64);}
+    else{const pmax=a>1?LN(a,6):2.6;p=clamp(Math.round(PI.IX(pt.x)*20)/20,a>1?-2.8:-1.5,a>1?pmax:2.6);}draw();});
+  const hs=$('#v2h'),ks=$('#v2k');
+  function crossings(){const r=[];let px=0.0005,pg=Math.pow(a,px)-LN(a,px);
+    for(let i=1;i<=20000;i++){const x=0.0005+i*0.0005,g=Math.pow(a,x)-LN(a,x);
+      if(g===0||(g>0)!==(pg>0)){let lo=px,hi=x;for(let j=0;j<50;j++){const m=(lo+hi)/2,gm=Math.pow(a,m)-LN(a,m);if((gm>0)===(pg>0))lo=m;else hi=m;}r.push((lo+hi)/2);}
+      px=x;pg=g;}return r.filter((v,i)=>!i||v-r[i-1]>1e-4);}
+  function drawInv(){
+    const Z=zoom(),P=Z?PZ:PI;
+    if(Z)drawAxes(layer,P,0.25,0.25,v=>niceX(v),v=>niceX(v));else drawAxes(layer,P,1,1,v=>mn(v),v=>mn(v));
+    el('line',{x1:P.X(P.y0),y1:P.Y(P.y0),x2:P.X(P.y1),y2:P.Y(P.y1),stroke:'#9fb6d9','stroke-width':1.5,'stroke-dasharray':'6 5'},layer);
+    txt(layer,P.X(P.y1*0.93)+(Z?14:0),P.Y(P.y1)+12,'y = x','lbl sm',Z?'start':'end');
+    curve(layer,P,x=>Math.pow(a,x),{stroke:'#ff9f43','stroke-width':3.5},400);
+    domCurve(layer,P,x=>LN(a,x),0,1,{stroke:'#36e0ff','stroke-width':3.5});
+    if(Z){txt(layer,P.X(0.02),P.T+12,'y = '+bP(a)+'ˣ','lbl','start');txtR(layer,P.X(1.17),P.Y(0.12),'y = '+logS(a)+'x','lbl','end');
+      txt(layer,P.W-P.R-6,P.T+12,'（放大圖：0 ≤ x ≤ 1.2）','lbl sm','end');}
+    else{txt(layer,a>1?P.X(1.9):P.X(-2.6),P.T+12,'y = '+bP(a)+'ˣ','lbl',a>1?'end':'start');
+      txtR(layer,P.X(10.2),P.Y(LN(a,10.2))+(a>1?16:-16),'y = '+logS(a)+'x','lbl','end');}
+    if(Z)crossings().forEach(x=>dot(layer,P,x,LN(a,x),'#3ee08f',5));
+    dot(layer,P,0,1,'#ff9f43',5);dot(layer,P,1,0,'#36e0ff',5);
+    const q=Math.pow(a,p);
+    el('line',{x1:P.X(p),y1:P.Y(q),x2:P.X(q),y2:P.Y(p),stroke:'#ffd84d','stroke-width':2,'stroke-dasharray':'4 4'},layer);
+    dot(layer,P,(p+q)/2,(p+q)/2,'#ffd84d',4);
+    dot(layer,P,q,p,'#ff7aa8',7);
+    txt(layer,P.X(q)+10,P.Y(p)+16,`Q(${r2(q)}, ${r2(p)})`,'lbl sm','start');
+    txt(layer,P.X(p)-10,P.Y(q)-14,`P(${r2(p)}, ${r2(q)})`,'lbl sm','end');
+    hd.setAttribute('cx',P.X(p));hd.setAttribute('cy',P.Y(q));
+    const cs=crossings();
+    out.innerHTML=`<div class="big"><span class="o">P(${r2(p)}, ${r2(q)}) 在 y = ${bP(a)}ˣ 上</span> ⇔ <span class="p">Q(${r2(q)}, ${r2(p)}) 在 y = ${logH(a)}x 上</span></div>`+
+      `<div>${bP(a)}^(${r2(p)}) ${Math.abs(q*100-Math.round(q*100))<1e-9?'=':'≈'} ${r2(q)} ⇔ ${logH(a)}${r2(q)} ${Math.abs(q*100-Math.round(q*100))<1e-9?'=':'≈'} ${r2(p)}：坐標對調，P、Q 的中點（黃點）在直線 y = x 上。定義域與值域互換、(0, 1) ↔ (1, 0)、漸近線 x 軸 ↔ y 軸。</div>`+
+      `<div>${cs.length?`兩圖形有 <b class="y">${cs.length}</b> 個交點：x ≈ ${cs.map(r3).join('、')}${cs.length>1?'（有些交點不在 y = x 上！）':'（在 y = x 上）'}`:'兩圖形<b class="y">沒有交點</b>：y = '+bP(a)+'ˣ 永遠在 y = x 上方，y = '+logH(a)+'x 永遠在下方。'}</div>`;
+  }
+  function g0(x){return ref===2?LN(a,-x):(ref===1?-LN(a,x):LN(a,x));}
+  function drawShift(){
+    const P=PS;drawAxes(layer,P,1,1,v=>mn(v),v=>mn(v));
+    const side=ref===2?-1:1;
+    domCurve(layer,P,x=>LN(a,x),0,1,{stroke:'rgba(159,182,217,.55)','stroke-width':2,'stroke-dasharray':'6 5'});
+    txtR(layer,P.X(8.8),P.Y(LN(a,8.8))+(a>1?14:-14),'y = '+logS(a)+'x','lbl sm','end');
+    el('line',{x1:P.X(h),y1:P.T,x2:P.X(h),y2:P.H-P.B,stroke:'#ff5a5a','stroke-width':2.5,'stroke-dasharray':'7 5'},layer);
+    txt(layer,P.X(h)+(side>0?-6:6),P.T+12,'x = '+mn(h),'lbl sm',side>0?'end':'start');
+    domCurve(layer,P,x=>g0(x-h)+k,h,side,{stroke:'#36e0ff','stroke-width':3.5});
+    /* 特殊點：(1, 0) 與 (a, 1) 移動後的位置 */
+    const pts=[[side*1+h,k,'#ffd84d'],[side*a+h,(ref===1?-1:1)+k,'#ff9f43']];
+    pts.forEach(([x,y,c])=>{if(x>P.x0&&x<P.x1&&y>P.y0&&y<P.y1){dot(layer,P,x,y,c,6);txt(layer,P.X(x)+8,P.Y(y)-13,`(${niceX(x)}, ${niceX(y)})`,'lbl sm','start');}});
+    hd.setAttribute('cx',-100);hd.setAttribute('cy',-100);
+    /* 式子 */
+    let inner=h===0?'x':(h>0?`x − ${h}`:`x + ${-h}`);
+    if(ref===2)inner=h===0?'−x':`−(${inner})`;
+    const argS=(inner==='x')?'x':'('+inner+')';
+    const fS=(ref===1?'−':'')+logH(a)+argS+(k===0?'':(k>0?` + ${k}`:` − ${-k}`));
+    const moves=[];if(ref===1)moves.push('對 x 軸鏡射');if(ref===2)moves.push('對 y 軸鏡射');
+    if(h)moves.push(h>0?`向右平移 ${h}`:`向左平移 ${-h}`);if(k)moves.push(k>0?`向上平移 ${k}`:`向下平移 ${-k}`);
+    /* x 截距 */
+    const u=ref===0?Math.pow(a,-k):(ref===1?Math.pow(a,k):-Math.pow(a,-k));const xi=u+h;
+    /* y 截距 */
+    let yi=null;const u0=-h;if((ref<2&&u0>0)||(ref===2&&u0<0))yi=g0(u0)+k;
+    out.innerHTML=`<div class="big">y = ${fS}</div>`+
+      `<div>由 y = ${logH(a)}x ${moves.length?moves.join('、'):'不動'} 得到。漸近線 <b class="r">x = ${mn(h)}</b>，定義域 <b class="y">x ${side>0?'&gt;':'&lt;'} ${mn(h)}</b>。</div>`+
+      `<div>與 x 軸交點 (${niceX(xi)}, 0)；${yi===null?'與 y 軸<b>沒有交點</b>（x = 0 不在定義域內）':`與 y 軸交點 (0, ${r3(yi)})`}。</div>`+
+      (h>0&&ref!==2?`<div class="hint" style="margin-top:2px">x − ${h} 是向<b>右</b>移：原本 x = 0 的漸近線，要 x = ${h} 時括號裡才是 0。</div>`:'');
+  }
+  function draw(){
+    $('#v2hv').textContent=mn(h);$('#v2kv').textContent=mn(k);
+    layer.innerHTML='';mode==='inv'?drawInv():drawShift();
+  }
+  segTabs($('#v2tabs'),btn=>{mode=btn.dataset.m;const inv=mode==='inv';$('#v2ctrlB').hidden=inv;$('#v2b16').hidden=!inv;
+    if(!inv&&a<0.1){a=2;$$('#v2base button').forEach(x=>x.classList.toggle('on',x.dataset.a==='2'));}
+    $('#v2hint').textContent=inv?'沿橘色曲線 y = aˣ 拖曳白點 P，青色曲線 y = logₐx 上會出現坐標對調的點 Q：P、Q 對稱於直線 y = x。試試底數 1/16：交點竟然有三個。':'灰色虛線是原來的 y = logₐx。拉 h、k 滑桿或選鏡射，看紅色漸近線、定義域與兩個特殊點（黃、橘）怎麼跟著移動。';draw();});
+  segTabs($('#v2base'),btn=>{a=+btn.dataset.a;p=a>1?1:(a<0.1?0.3:-1);draw();});
+  hs.oninput=()=>{h=+hs.value;draw();};ks.oninput=()=>{k=+ks.value;draw();};
+  segTabs($('#v2ref'),btn=>{ref=+btn.dataset.r;draw();});
+  $$('#v2pre button').forEach(btn=>btn.addEventListener('click',()=>{const[aa,hh,kk,rr]=btn.dataset.p.split(',').map(Number);a=aa;h=hh;k=kk;ref=rr;hs.value=h;ks.value=k;
+    $$('#v2base button').forEach(x=>x.classList.toggle('on',+x.dataset.a===a));$$('#v2ref button').forEach(x=>x.classList.toggle('on',+x.dataset.r===ref));draw();}));
+  draw();
+})();
+
+/* ================= V3: 大小比較 / 閉區間最值 ================= */
+(function(){
+  const svg=$('#v3'),out=$('#v3out');let mode='line',set=0,shown=false,ea=2,pi=1,qi=10;
+  const SETS=[
+    {lo:-2.2,hi:2.2,items:[
+      {s:'log₂3',h:'log₂3',v:LN(2,3),why:'3 &gt; 2 ⇒ 大於 log₂2 = 1'},
+      {s:'log₃2',h:'log₃2',v:LN(3,2),why:'1 &lt; 2 &lt; 3 ⇒ 介於 log₃1 = 0 和 log₃3 = 1 之間'},
+      {s:'log_{1/2}3',h:'log<sub>1/2</sub>3',v:LN(0.5,3),why:'底數小於 1、真數大於 1 ⇒ 負數'}],ans:'log₂3 &gt; log₃2 &gt; log<sub>1/2</sub>3'},
+    {lo:-2.2,hi:2.2,items:[
+      {s:'log₂0.3',h:'log₂0.3',v:LN(2,0.3),why:'底數大於 1、真數小於 1 ⇒ 負數'},
+      {s:'2^(0.3)',h:'2^(0.3)',v:Math.pow(2,0.3),why:'2⁰ = 1，指數為正 ⇒ 大於 1'},
+      {s:'0.3²',h:'0.3²',v:0.09,ex:true,why:'介於 0 和 1 之間'}],ans:'2^(0.3) &gt; 0.3² &gt; log₂0.3'},
+    {lo:1,hi:2,mark:1.5,items:[
+      {s:'log₂3',h:'log₂3',v:LN(2,3),why:'3² = 9 &gt; 8 = 2³ ⇒ 3 &gt; 2^(3/2) ⇒ 大於 3/2'},
+      {s:'log₃5',h:'log₃5',v:LN(3,5),why:'5² = 25 &lt; 27 = 3³ ⇒ 5 &lt; 3^(3/2) ⇒ 小於 3/2'}],ans:'log₂3 &gt; 3/2 &gt; log₃5'},
+    {lo:0.8,hi:2.6,items:[
+      {s:'log₂5',h:'log₂5',v:LN(2,5),why:'= 1 ÷ log₅2'},
+      {s:'log₃5',h:'log₃5',v:LN(3,5),why:'= 1 ÷ log₅3'},
+      {s:'log₄5',h:'log₄5',v:LN(4,5),why:'= 1 ÷ log₅4；0 &lt; log₅2 &lt; log₅3 &lt; log₅4，取倒數順序相反'}],ans:'log₂5 &gt; log₃5 &gt; log₄5'},
+    {lo:0,hi:2,items:[
+      {s:'log₄5',h:'log₄5',v:LN(4,5),why:'5 &gt; 4 ⇒ 大於 log₄4 = 1'},
+      {s:'log₅4',h:'log₅4',v:LN(5,4),why:'1 &lt; 4 &lt; 5 ⇒ 介於 0 和 1 之間'}],ans:'log₄5 &gt; 1 &gt; log₅4'}];
+  const NICE=[0.25,0.5,1,1.5,2,3,4,5,6,7,8];
+  const ps=$('#v3p'),qs=$('#v3q');
+  const PE=mkPlot(svg,-0.5,9,-4,4);
+  const layer=el('g',{},svg);
+  function drawLine(){
+    const S=SETS[set],L=40,R=480,Y=200,X=v=>L+(v-S.lo)/(S.hi-S.lo)*(R-L);
+    const zone=(a,b,c)=>{const x1=X(Math.max(a,S.lo)),x2=X(Math.min(b,S.hi));if(x2>x1)el('rect',{x:x1,y:Y-16,width:x2-x1,height:32,fill:c},layer);};
+    zone(-99,0,'rgba(255,90,90,.25)');zone(0,1,'rgba(255,216,77,.22)');zone(1,99,'rgba(62,224,143,.22)');
+    el('line',{x1:L-10,y1:Y,x2:R+10,y2:Y,stroke:'#9fb6d9','stroke-width':2},layer);
+    const step=(S.hi-S.lo)>3?1:0.5;
+    for(let v=Math.ceil(S.lo/step)*step;v<=S.hi+1e-9;v+=step){el('line',{x1:X(v),y1:Y-6,x2:X(v),y2:Y+6,stroke:'#9fb6d9'},layer);txt(layer,X(v),Y+30,mn(+v.toFixed(2)),'lbl sm');}
+    if(S.lo<0&&S.hi>1){txt(layer,X((S.lo)/2),Y+52,'負數','lbl sm');txt(layer,X(0.5),Y+52,'0～1','lbl sm');txt(layer,X((1+S.hi)/2),Y+52,'大於 1','lbl sm');}
+    if(S.mark){el('line',{x1:X(S.mark),y1:Y-40,x2:X(S.mark),y2:Y+16,stroke:'#ff7aa8','stroke-width':2.5,'stroke-dasharray':'5 4'},layer);txt(layer,X(S.mark),Y+52,'3/2','lbl sm');}
+    const cols=['#36e0ff','#ffd84d','#ff9f43'];
+    if(!shown){S.items.forEach((it,i)=>{const cx=110+i*150;el('rect',{x:cx-62,y:40,width:124,height:46,rx:10,fill:'rgba(11,33,71,.9)',stroke:cols[i],'stroke-width':2},layer);txtR(layer,cx,63,it.s,'lbl');});
+      txt(layer,260,120,'這幾個數在數線上的哪裡？由大到小怎麼排？','lbl sm');
+      out.innerHTML='<div class="big">先猜：由大到小怎麼排？</div><div>提示：先判斷每個數是負數、介於 0 和 1，還是大於 1。</div>';return;}
+    const sorted=S.items.map((it,i)=>({...it,i})).sort((p,q)=>p.v-q.v);
+    sorted.forEach((it,j)=>{const x=X(it.v),up=j%2===0,ty=up?Y-70:Y-118;const c=cols[it.i];
+      el('line',{x1:x,y1:Y,x2:x,y2:ty+14,stroke:c,'stroke-width':2},layer);el('circle',{cx:x,cy:Y,r:7,fill:c,stroke:'#06142b','stroke-width':2},layer);
+      txtR(layer,x,ty,it.s,'lbl');txt(layer,x,ty+16+0,(it.ex?'= ':'≈ ')+r3(it.v),'lbl sm');});
+    out.innerHTML=`<div class="big">${S.ans}</div>`+S.items.map((it,i)=>`<div><b style="color:${cols[i]}">${it.h}</b> ${it.ex?'=':'≈'} ${r3(it.v)}：${it.why}</div>`).join('');
+  }
+  function drawExt(){
+    const P=PE,a=ea,f=x=>LN(a,x);let p=NICE[pi],q=NICE[qi];if(p>q)[p,q]=[q,p];
+    $('#v3pv').textContent=niceX(p);$('#v3qv').textContent=niceX(q);
+    drawAxes(layer,P,1,1,v=>mn(v),v=>mn(v));
+    domCurve(layer,P,f,0,1,{stroke:'rgba(54,224,255,.45)','stroke-width':2.5});
+    txtR(layer,P.X(1.4),P.T+12,'y = '+logS(a)+'x','lbl','start');
+    if(p===q){out.innerHTML='<div class="big r">p 和 q 不能相同</div>';return;}
+    let d='';for(let i=0;i<=200;i++){const x=p+(q-p)*i/200;d+=(i?'L':'M')+P.X(x).toFixed(1)+','+P.Y(f(x)).toFixed(1);}
+    el('path',{d,fill:'none',stroke:'#36e0ff','stroke-width':5,'clip-path':P.clip},layer);
+    [p,q].forEach(x=>el('line',{x1:P.X(x),y1:P.Y(0),x2:P.X(x),y2:P.Y(f(x)),stroke:'#9fb6d9','stroke-dasharray':'3 4'},layer));
+    const inc=a>1,xMax=inc?q:p,xMin=inc?p:q;
+    dot(layer,P,xMax,f(xMax),'#3ee08f',8);dot(layer,P,xMin,f(xMin),'#ff9f43',8);
+    txt(layer,P.X(xMax)+(inc?-10:10),P.Y(f(xMax))-16,'最大 '+r3(f(xMax)),'lbl sm',inc?'end':'start');
+    txt(layer,P.X(xMin)+(inc?10:-10),P.Y(f(xMin))+18,'最小 '+r3(f(xMin)),'lbl sm',inc?'start':'end');
+    out.innerHTML=`<div class="big">y = ${logH(a)}x，${niceX(p)} ≤ x ≤ ${niceX(q)}</div>`+
+      `<div>${inc?'底數大於 1，<b class="g">遞增</b>：右端點最大、左端點最小':'底數小於 1，<b class="o">遞減</b>：左端點最大、右端點最小'}。</div>`+
+      `<div><b class="g">最大值 ${logH(a)}${argP(xMax)} = ${r3(f(xMax))}</b>（x = ${niceX(xMax)}）；<b class="o">最小值 ${logH(a)}${argP(xMin)} =${r3(f(xMin))}</b>（x = ${niceX(xMin)}）。</div>`;
+  }
+  function draw(){layer.innerHTML='';mode==='line'?drawLine():drawExt();}
+  segTabs($('#v3tabs'),btn=>{mode=btn.dataset.m;const ln=mode==='line';$('#v3sets').hidden=!ln;$('#v3ctrlA').hidden=!ln;$('#v3exb').hidden=ln;$('#v3ctrlB').hidden=ln;
+    $('#v3hint').textContent=ln?'數線分成三區：紅色是負數、黃色是 0 到 1、綠色是大於 1。先判斷每個數在哪一區，同一區再細比。':'拉兩個端點：單調函數在閉區間上，最大值和最小值一定出現在端點。底數小於 1 時，最大值反而在左端點。';draw();});
+  segTabs($('#v3sets'),btn=>{set=+btn.dataset.s;shown=false;$('#v3reveal').textContent='揭曉位置';draw();});
+  $('#v3reveal').onclick=()=>{shown=!shown;$('#v3reveal').textContent=shown?'隱藏位置':'揭曉位置';draw();};
+  segTabs($('#v3exb'),btn=>{ea=+btn.dataset.a;draw();});
+  ps.oninput=()=>{pi=+ps.value;draw();};qs.oninput=()=>{qi=+qs.value;draw();};
+  $$('#v3pre button').forEach(btn=>btn.addEventListener('click',()=>{const[aa,pp,qq]=btn.dataset.p.split(',').map(Number);ea=aa;pi=pp;qi=qq;ps.value=pi;qs.value=qi;
+    $$('#v3exb button').forEach(x=>x.classList.toggle('on',+x.dataset.a===ea));draw();}));
+  draw();
+})();
+
+/* ================= V4: 交點個數 / 半對數圖 ================= */
+(function(){
+  const svg=$('#v4'),out=$('#v4out');let mode='cross',a=2,m=-1,c=3,k=3,ga=2,scale='log';
+  const PC=mkPlot(svg,-1,9,-4,5);
+  const layer=el('g',{},svg);
+  const ms=$('#v4m'),cs=$('#v4c'),kS=$('#v4k'),aS=$('#v4a');
+  const lineS=()=>{const mm=m===0?'':(m===1?'x':(m===-1?'−x':mn(m)+'x'));if(!mm)return mn(c);return mm+(c===0?'':(c>0?' + '+c:' − '+(-c)));};
+  function roots(){const g=x=>LN(a,x)-(m*x+c);const r=[];
+    let px=1e-9,pg=g(px);
+    for(let i=1;i<=6000;i++){const x=Math.pow(10,-9+13*i/6000),gv=g(x);
+      if(gv===0){r.push(x);}else if((gv>0)!==(pg>0)&&pg!==0){let lo=px,hi=x;for(let j=0;j<80;j++){const mid=(lo+hi)/2;if((g(mid)>0)===(pg>0))lo=mid;else hi=mid;}r.push((lo+hi)/2);}
+      px=x;pg=gv;}
+    return r.map(x=>Math.abs(x-Math.round(x))<1e-7?Math.round(x):x);}
+  function drawCross(){
+    const P=PC;$('#v4mv').textContent=mn(m);$('#v4cv').textContent=mn(c);
+    drawAxes(layer,P,1,1,v=>mn(v),v=>mn(v));
+    domCurve(layer,P,x=>LN(a,x),0,1,{stroke:'#36e0ff','stroke-width':3.5});
+    curve(layer,P,x=>m*x+c,{stroke:'#ff9f43','stroke-width':3});
+    txtR(layer,P.X(8.8),clamp(P.Y(LN(a,8.8))+(a>1?18:-16),P.T+12,P.H-P.B-10),'y = '+logS(a)+'x','lbl','end');
+    const lx=m>0?Math.min(8.5,(4.4-c)/m):(m<0?Math.max(-0.6,(4.4-c)/m):-0.6);
+    txt(layer,clamp(P.X(lx),60,470),clamp(P.Y(m*lx+c)-14,P.T+12,P.H-P.B-10),'y = '+lineS(),'lbl sm','middle');
+    const R=roots();
+    R.forEach(x=>{const y=LN(a,x);if(x<=P.x1&&y>=P.y0&&y<=P.y1){dot(layer,P,x,y,'#ff7aa8',7);txt(layer,P.X(x)+8,P.Y(y)+(R.length>1&&x===R[0]?18:-16),(Number.isInteger(x)?'x = '+x:'x ≈ '+r3(x)),'lbl sm','start');}});
+    const mono=(a>1&&m<0)||(a<1&&m>0);
+    const fx=x=>Number.isInteger(x)?String(x):'≈ '+r3(x);
+    out.innerHTML=`<div class="big">${logH(a)}x = ${lineS()}　<span class="p">實根 ${R.length} 個</span></div>`+
+      `<div>${R.length?'交點的 x 坐標：'+R.map(x=>'x '+(Number.isInteger(x)?'= '+x:fx(x))).join('、')+(R.some(x=>x>P.x1)?'（有交點在圖的右邊外面）':''):'兩圖形沒有交點，方程式沒有實根。'}</div>`+
+      `<div class="hint" style="margin-top:2px">${mono?'一個遞增、一個遞減：最多只有一個交點。':(m===0?'水平線一定和對數曲線恰好交一點（值域是全體實數）。':'兩個都遞增（或都遞減）時，交點可能是 0、1 或 2 個，要畫圖才知道。')}</div>`;
+  }
+  function drawSemi(){
+    const gS=mn(+ga.toFixed(1)),L4=v=>v<1e-9?'0':v.toFixed(4);
+    $('#v4kv').textContent=k;$('#v4av').textContent=gS;
+    const N=10,ys=[...Array(N+1)].map((_,x)=>k*Math.pow(ga,x)),ymax=ys[N];
+    let P;
+    if(scale==='log'){const top=Math.max(1,Math.ceil(Math.log10(ymax)+1e-9));P=mkPlot(svg,-0.5,10.5,0,top+0.25,{L:52,T:22});
+      drawAxes(layer,P,1,1,v=>mn(v),v=>v<=3?String(Math.pow(10,v)):'10^'+v);
+    }else{P=mkPlot(svg,-0.5,10.5,0,ymax*1.05,{L:62});const st=Math.pow(10,Math.floor(Math.log10(ymax)));const s2=ymax/st>5?st*2:st;
+      drawAxes(layer,P,1,s2,v=>mn(v),v=>fmtN(v,0));}
+    const Yv=y=>scale==='log'?P.Y(Math.log10(y)):P.Y(y);
+    let d='';ys.forEach((y,x)=>{d+=(x?'L':'M')+P.X(x).toFixed(1)+','+Yv(y).toFixed(1);});
+    el('path',{d,fill:'none',stroke:'#36e0ff','stroke-width':3,'clip-path':P.clip},layer);
+    ys.forEach((y,x)=>el('circle',{cx:P.X(x),cy:Yv(y),r:5,fill:'#ffd84d',stroke:'#06142b','stroke-width':1.5},layer));
+    txt(layer,P.X(5),P.T+10,scale==='log'?'縱軸：對數刻度（每格 10 倍）':'縱軸：y（一般刻度）','lbl sm','middle');
+    const lk=Math.log10(k),la=Math.log10(ga);
+    out.innerHTML=`<div class="big">y = ${k} · ${gS}ˣ　⇒　log y = ${L4(lk)} + ${L4(la)} x</div>`+
+      `<div>${scale==='log'?`在半對數圖上是一條<b class="c">直線</b>：斜率 log ${gS} ≈ ${L4(la)}、截距 log ${k} ${k===1?'=':'≈'} ${L4(lk)}。x 每加 1，y 就乘 ${gS}（log y 固定增加 ${L4(la)}）。`:`一般刻度：前面幾乎貼著 x 軸看不清楚，後面暴衝（x = 10 時 y ≈ ${fmtN(ymax,0)}）。切換成對數刻度看看。`}</div>`;
+  }
+  function draw(){layer.innerHTML='';
+    /* 半對數圖每次重畫都會重新 mkPlot，先清掉多出來的 clipPath */
+    if(mode==='semi'){const ds=svg.querySelectorAll('defs');ds.forEach((dd,i)=>{if(i>0)dd.remove();});}
+    mode==='cross'?drawCross():drawSemi();}
+  segTabs($('#v4tabs'),btn=>{mode=btn.dataset.m;const cr=mode==='cross';$('#v4ctrlA').hidden=!cr;$('#v4ctrlA2').hidden=!cr;$('#v4ctrlB').hidden=cr;
+    $('#v4hint').textContent=cr?'調整直線 y = mx + c，看它和對數曲線有幾個交點：交點的 x 坐標就是方程式的實根。一增一減最多一個交點；對數曲線彎彎的，和直線可能有 0、1 或 2 個交點。':'黃點是 y = k·aˣ 在 x = 0, 1, …, 10 的值。縱軸改成對數刻度（每格差 10 倍）後，指數成長變成一條直線；看到直線就代表是指數成長。';draw();});
+  segTabs($('#v4base'),btn=>{a=+btn.dataset.a;draw();});
+  ms.oninput=()=>{m=+ms.value;$$('#v4pre button').forEach(x=>x.classList.remove('on'));draw();};
+  cs.oninput=()=>{c=+cs.value;$$('#v4pre button').forEach(x=>x.classList.remove('on'));draw();};
+  $$('#v4pre button').forEach(btn=>btn.addEventListener('click',()=>{const[aa,mm,cc]=btn.dataset.p.split(',').map(Number);a=aa;m=mm;c=cc;ms.value=m;cs.value=c;
+    $$('#v4base button').forEach(x=>x.classList.toggle('on',+x.dataset.a===a));$$('#v4pre button').forEach(x=>x.classList.toggle('on',x===btn));draw();}));
+  kS.oninput=()=>{k=+kS.value;draw();};aS.oninput=()=>{ga=+aS.value;draw();};
+  segTabs($('#v4scale'),btn=>{scale=btn.dataset.s;draw();});
+  draw();
+})();
+/* ================= Mind map ================= */
+const MINDMAP={"name":"單元七 對數函數","children":[{"name":"7-1 對數函數的定義與圖形","children":[{"name":"定義","children":[{"name":"y = logₐx（a \u003e 0，a ≠ 1）"},{"name":"定義域：x \u003e 0"},{"name":"值域：全體實數"}]},{"name":"圖形特徵","children":[{"name":"圖形在 y 軸右側"},{"name":"必過 (1, 0) 與 (a, 1)"},{"name":"漸近線：y 軸（x = 0）"},{"name":"a \u003e 1：嚴格遞增"},{"name":"0 \u003c a \u003c 1：嚴格遞減"},{"name":"y = logₐx 與 y = log_(1/a)x 對稱於 x 軸"},{"name":"越長越慢：x 變 2 倍，log₂x 才加 1"}]},{"name":"底數比較（a \u003e 1）","children":[{"name":"x \u003e 1 時，底數越大圖形越平（越貼近 x 軸）"}]}]},{"name":"7-2 與指數函數的關係、圖形變換","children":[{"name":"互為反函數","children":[{"name":"y = aˣ 與 y = logₐx 互為反函數"},{"name":"圖形對稱於直線 y = x"},{"name":"點對調：(p, q) ⇔ (q, p)"},{"name":"定義域與值域互換"},{"name":"漸近線互換：x 軸 ↔ y 軸"}]},{"name":"圖形變換","children":[{"name":"y = logₐ(x − h) + k：右移 h、上移 k"},{"name":"y = −logₐx：對 x 軸鏡射"},{"name":"y = logₐ(−x)：對 y 軸鏡射（定義域 x \u003c 0）"},{"name":"y = logₐ(cx) = logₐc + logₐx：上下平移 logₐc"},{"name":"平移後漸近線 x = h、定義域 x \u003e h"}]}]},{"name":"7-3 性質與大小比較","children":[{"name":"單調性與一對一","children":[{"name":"a \u003e 1：0 \u003c u \u003c v ⇔ logₐu \u003c logₐv"},{"name":"0 \u003c a \u003c 1：0 \u003c u \u003c v ⇔ logₐu \u003e logₐv"},{"name":"一對一：logₐu = logₐv ⇔ u = v"}]},{"name":"比較大小的方法","children":[{"name":"同底：看單調性"},{"name":"中間值：先與 0、1 比較"},{"name":"同真數：換底 logₐb = 1 / log_b a"},{"name":"夾中間數：例如用 3/2 比較"}]},{"name":"限定範圍的最大值與最小值","children":[{"name":"閉區間 [p, q]：最值在端點"},{"name":"真數為二次式：先求真數範圍"},{"name":"二次型：令 t = logₐx，記得換範圍"}]}]},{"name":"7-4 對數不等式與圖形的應用","children":[{"name":"解對數不等式","children":[{"name":"步驟 1：定義範圍（真數 \u003e 0）"},{"name":"步驟 2：化成同底"},{"name":"步驟 3：用單調性去掉 log（0 \u003c a \u003c 1 要變號）"},{"name":"步驟 4：與定義範圍取交集"}]},{"name":"實根個數","children":[{"name":"f(x) = g(x) 的實根＝兩圖形交點"},{"name":"一增一減：最多 1 個交點"},{"name":"對數曲線與直線：0、1 或 2 個交點"}]},{"name":"特殊方程式","children":[{"name":"x^(log x) 型：兩邊取常用對數"}]},{"name":"半對數圖","children":[{"name":"y = k · aˣ ⇒ log y = log k + x · log a"},{"name":"指數成長畫成直線"},{"name":"橫軸一般刻度、縱軸對數刻度"},{"name":"斜率 log a、截距 log k"}]}]}]};
+(function(){
+  const box=$('#mindmap');if(!MINDMAP){box.textContent='（心智圖資料尚未載入）';return;}
+  /* log_c b、log_(aᵐ) 的底數顯示成下標 */
+  const esc=s=>{const d=document.createElement('div');d.textContent=s;return d.innerHTML.replace(/_\(([^()]*)\)/g,'<sub>$1</sub>').replace(/_([A-Za-z0-9])/g,'<sub>$1</sub>');};
+  const COLORS=['#ffd84d','#36e0ff','#ff9f43','#3ee08f','#ff7aa8','#b48cff'];
+  const node=n=>n.children&&n.children.length?`<details open><summary>${esc(n.name)}</summary>${
+      n.children.every(c=>!c.children||!c.children.length)?`<div class="mm-leaf">${n.children.map(c=>`<span>${esc(c.name)}</span>`).join('')}</div>`:n.children.map(node).join('')}</details>`
+    :`<div class="mm-leaf"><span>${esc(n.name)}</span></div>`;
+  box.innerHTML=`<div class="mm-root">${esc(MINDMAP.name)}</div><div class="mm-grid">${(MINDMAP.children||[]).map((b,i)=>
+    `<div class="mm-br" style="--bc:${COLORS[i%COLORS.length]}"><h4>${esc(b.name)}</h4>${(b.children||[]).map(node).join('')}</div>`).join('')}</div>`;
+  $('#mmOpen').onclick=()=>$$('#mindmap details').forEach(d=>d.open=true);
+  $('#mmClose').onclick=()=>$$('#mindmap details').forEach(d=>d.open=false);
+})();
+
+/* ================= Flashcards ================= */
+const CARDS_RAW=[{"f":"對數函數 $f(x) = \\log_a x$ 的底數 $a$ 有何限制？","b":"$a \u003e 0$ 且 $a \\neq 1$"},{"f":"對數函數 $y = \\log_a x$ 的定義域為何？","b":"$x \u003e 0$（真數必須為正數）"},{"f":"對數函數 $y = \\log_a x$ 的值域為何？","b":"全體實數"},{"f":"無論底數 $a$ 為何（$a \u003e 0, a \\neq 1$），$y = \\log_a x$ 的圖形必通過哪兩個固定點？","b":"$(1, 0)$ 與 $(a, 1)$"},{"f":"對數函數 $y = \\log_a x$ 的漸近線為哪一條直線？","b":"$y$ 軸（即直線 $x = 0$）"},{"f":"當底數 $a \u003e 1$ 時，對數函數 $y = \\log_a x$ 的圖形具有怎樣的單調性？","b":"嚴格遞增（圖形由左下往右上）"},{"f":"當底數 $0 \u003c a \u003c 1$ 時，對數函數 $y = \\log_a x$ 的圖形具有怎樣的單調性？","b":"嚴格遞減（圖形由左上往右下）"},{"f":"$y = \\log_a x$ 與 $y = \\log_{\\frac{1}{a}} x$ 的圖形具有怎樣的對稱關係？","b":"對稱於 $x$ 軸（因為 $\\log_{\\frac{1}{a}} x = -\\log_a x$）"},{"f":"在 $x \u003e 1$ 的部分，當底數 $a \u003e 1$ 時，底數 $a$ 越大，$y = \\log_a x$ 的圖形會如何變化？","b":"越貼近 $x$ 軸（圖形越平緩）"},{"f":"求函數 $y = \\log_2(x - 3)$ 的定義域。","b":"$x \u003e 3$"},{"f":"求函數 $y = \\log_3(4 - x^2)$ 的定義域。","b":"$-2 \u003c x \u003c 2$"},{"f":"求函數 $y = \\log(x^2 - 2x - 3)$ 的定義域。","b":"$x \u003c -1$ 或 $x \u003e 3$"},{"f":"已知對數函數 $y = \\log_a x$ 的圖形通過點 $(9, 2)$，求底數 $a$ 的值。","b":"$a = 3$"},{"f":"已知 $\\log_a 3 \u003c \\log_a 2$，判斷底數 $a$ 的範圍。","b":"$0 \u003c a \u003c 1$（因為真數 3 大於 2 但函數值反而較小，表示函數遞減）"},{"f":"對數函數 $y = \\log_a x$ 的圖形是否會相交於 $y$ 軸？","b":"不會。真數必須大於 0，$y$ 軸（$x = 0$）是漸近線，圖形無限靠近但永不相交。"},{"f":"對數函數 $y = \\log_a x$ 的函數值 $y$ 是否一定為正數？","b":"否。真數 $x$ 必須為正數，但函數值 $y$ 可以是任何實數（例如 $\\log_2 \\frac{1}{4} = -2$）。"},{"f":"指數函數 $y = a^x$ 與對數函數 $y = \\log_a x$ 在幾何關係上互為什麼？","b":"互為反函數"},{"f":"指數函數 $y = a^x$ 與對數函數 $y = \\log_a x$ 的圖形對稱於哪一條直線？","b":"直線 $y = x$"},{"f":"若點 $(p, q)$ 在 $y = a^x$ 的圖形上，則哪一個點必定在 $y = \\log_a x$ 的圖形上？","b":"點 $(q, p)$"},{"f":"對數函數 $y = \\log_a x$ 的漸近線為 $y$ 軸，其反函數 $y = a^x$ 的漸近線為何？","b":"$x$ 軸（即直線 $y = 0$）"},{"f":"將 $y = \\log_2 x$ 的圖形向右平移 1 單位，得到的新函數與漸近線為何？","b":"新函數為 $y = \\log_2(x - 1)$，漸近線為 $x = 1$"},{"f":"將 $y = \\log_2 x$ 的圖形向上平移 2 單位，得到的新函數為何？","b":"$y = \\log_2 x + 2$（利用對數律亦可寫為 $y = \\log_2(4x)$）"},{"f":"將 $y = \\log_2 x$ 的圖形對 $x$ 軸進行鏡射，會得到哪一個函數？","b":"$y = -\\log_2 x$（即 $y = \\log_{\\frac{1}{2}} x$）"},{"f":"將 $y = \\log_2 x$ 的圖形對 $y$ 軸進行鏡射，得到的新函數及其定義域為何？","b":"$y = \\log_2(-x)$，定義域為 $x \u003c 0$"},{"f":"已知點 $(3, 8)$ 在 $y = 2^x$ 上，寫出 $y = \\log_2 x$ 上相對應的點。","b":"$(8, 3)$"},{"f":"求函數 $y = \\log_3(x + 2) - 1$ 的漸近線與 $x$ 軸交點坐標。","b":"漸近線為 $x = -2$；與 $x$ 軸交點為 $(1, 0)$"},{"f":"若函數 $y = \\log_a(x + b)$ 的圖形通過 $(0, 1)$ 與 $(2, 2)$，求 $a, b$ 的值。","b":"$a = 2, b = 2$"},{"f":"若 $f(x) = \\log_2 x$，求其反函數 $g(x)$ 以及 $g(3)$ 的值。","b":"$g(x) = 2^x$；$g(3) = 8$"},{"f":"$y = \\log_2(x - 1)$ 是將 $y = \\log_2 x$ 的圖形向左還是向右平移 1 單位？","b":"向右平移 1 單位（因為漸近線由 $x = 0$ 移至 $x = 1$）"},{"f":"指數函數 $y = 2^x$ 與對數函數 $y = \\log_2 x$ 的圖形是否有交點？","b":"沒有交點（$y = 2^x$ 恆在直線 $y = x$ 上方，$y = \\log_2 x$ 恆在 $y = x$ 下方）"},{"f":"當 $a \u003e 1$ 時，若 $0 \u003c u \u003c v$，則 $\\log_a u$ 與 $\\log_a v$ 的大小關係為何？","b":"$\\log_a u \u003c \\log_a v$"},{"f":"當 $0 \u003c a \u003c 1$ 時，若 $0 \u003c u \u003c v$，則 $\\log_a u$ 與 $\\log_a v$ 的大小關係為何？","b":"$\\log_a u \u003e \\log_a v$"},{"f":"比較 $\\log_2 0.5$、$\\log_2 3$、$\\log_2 5$ 的大小關係。","b":"$\\log_2 0.5 \u003c \\log_2 3 \u003c \\log_2 5$"},{"f":"比較 $\\log_{0.5} 3$ 與 $\\log_{0.5} 5$ 的大小關係。","b":"$\\log_{0.5} 3 \u003e \\log_{0.5} 5$"},{"f":"設 $a = \\log_2 3$、$b = \\log_3 2$、$c = \\log_{1/2} 3$，比較 $a, b, c$ 的大小。","b":"$a \u003e b \u003e c$（近似值分別約為 $1.585 \u003e 0.631 \u003e -1.585$）"},{"f":"設 $a = \\log_2 0.3$、$b = 2^{0.3}$、$c = 0.3^2$，比較 $a, b, c$ 的大小。","b":"$b \u003e c \u003e a$（因 $b \u003e 1$、$0 \u003c c \u003c 1$、$a \u003c 0$）"},{"f":"如何利用中間值 $\\frac{3}{2}$ 比較 $\\log_2 3$ 與 $\\log_3 5$ 的大小？","b":"$\\log_2 3 \u003e \\frac{3}{2}$（因 $3^2 \u003e 2^3$）；$\\log_3 5 \u003c \\frac{3}{2}$（因 $5^2 \u003c 3^3$），故 $\\log_2 3 \u003e \\log_3 5$。"},{"f":"當真數相同且大於 1 時（例如 $\\log_2 5, \\log_3 5, \\log_4 5$），底數越大對數值如何變化？","b":"對數值越小（$\\log_2 5 \u003e \\log_3 5 \u003e \\log_4 5$）"},{"f":"求函數 $y = \\log_2 x$ 在 $\\frac{1}{2} \\le x \\le 8$ 範圍內的最大值與最小值。","b":"最大值為 $3$（當 $x = 8$）；最小值為 $-1$（當 $x = \\frac{1}{2}$）"},{"f":"求函數 $y = \\log_{1/2}(x^2 - 4x + 8)$ 的極值情形。","b":"最大值為 $-2$（當 $x = 2$）；沒有最小值（因為真數可無限大）"},{"f":"求函數 $y = (\\log_2 x)^2 - 2 \\log_2 x + 3$ 在 $1 \\le x \\le 8$ 範圍內的最大值與最小值。","b":"最小值為 $2$（當 $x = 2$）；最大值為 $6$（當 $x = 8$）"},{"f":"令 $t = \\log_2 x$，若 $x$ 的限制範圍為 $1 \\le x \\le 8$，則新變數 $t$ 的範圍為何？","b":"$0 \\le t \\le 3$"},{"f":"解對數不等式的第一個必要步驟是什麼？","b":"寫出定義範圍：所有真數 $\u003e 0$（若底數含變數亦需限制底數 $\u003e 0$ 且 $\\neq 1$）"},{"f":"解對數不等式 $\\log_a f(x) \u003c \\log_a g(x)$ 時，若底數 $0 \u003c a \u003c 1$，去掉對數記號時不等號方向如何變化？","b":"不等號方向必須反向，變更為 $f(x) \u003e g(x)$"},{"f":"解對數不等式 $\\log_2(x - 1) \u003c 3$。","b":"$1 \u003c x \u003c 9$"},{"f":"解對數不等式 $\\log_{1/3}(2x - 1) \\ge -2$。","b":"$\\frac{1}{2} \u003c x \\le 5$"},{"f":"解對數不等式 $\\log_2 x + \\log_2(x - 2) \u003c 3$。","b":"$2 \u003c x \u003c 4$"},{"f":"解不等式 $(\\log_3 x)^2 - \\log_3 x - 2 \\le 0$。","b":"$\\frac{1}{3} \\le x \\le 9$"},{"f":"方程式 $f(x) = g(x)$ 的實根個數在幾何圖形上代表什麼意義？","b":"兩函數圖形 $y = f(x)$ 與 $y = g(x)$ 的交點個數"},{"f":"方程式 $\\log_2 x = -x + 3$ 有幾個實根？求出來。","b":"恰有 1 個實根，為 $x = 2$"},{"f":"方程式 $\\log_2 x = x - 1$ 有幾個實根？求出來。","b":"恰有 2 個實根，分別為 $x = 1$ 與 $x = 2$"},{"f":"解方程式 $x^{\\log x} = 100x$（$x \u003e 0$）。","b":"$x = 100$ 或 $x = \\frac{1}{10}$"},{"f":"若指數成長模型為 $y = k \\cdot a^x$，在半對數圖（橫軸 $x$、縱軸 $\\log y$）上的圖形呈現何種形狀？","b":"斜率為 $\\log a$、截距為 $\\log k$ 的直線"},{"f":"若一組數據在半對數圖上記錄為一條直線，代表該數據呈現何種成長規律？","b":"指數成長"},{"f":"解不等式 $\\log_{1/3}(2x - 1) \\ge -2$ 時，若未將不等號反向，會產生何種錯誤結果？","b":"會誤算出 $2x - 1 \\ge 9$（$x \\ge 5$），忽略了底數小於 1 時函數單調遞減的性質。"},{"f":"方程式 $\\log_2 x = x - 1$ 代入 $x = 1$ 成立，是否意味著它只有一個實根？","b":"否。畫圖檢驗可知對數曲線在 $1 \u003c x \u003c 2$ 之間位於直線上方，兩圖形交於 $(1, 0)$ 與 $(2, 1)$，故共有 2 個實根。"}];
+/* NotebookLM 學習卡的數學式是 LaTeX，這裡轉成 Unicode 文字顯示。
+   下標（log₂、log_b a）與複雜的上標用標記 \u0001…\u0002（sub）、\u0003…\u0004（sup），顯示時再轉成 HTML。 */
+function tex2u(s){
+  const SUP={'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','+':'⁺','−':'⁻','-':'⁻','n':'ⁿ','x':'ˣ','m':'ᵐ','t':'ᵗ','a':'ᵃ','b':'ᵇ','k':'ᵏ','h':'ʰ','i':'ⁱ','u':'ᵘ','v':'ᵛ','y':'ʸ','p':'ᵖ'};
+  const supOK=t=>t.length<=2||/^[−\-+]?\d+$/.test(t);
+  const sup=t=>[...t].every(c=>SUP[c])&&supOK(t)?[...t].map(c=>SUP[c]).join(''):'\u0003'+t+'\u0004';
+  const simple=t=>/^[\w.]+$/.test(t);
+  return s.replace(/\$([^$]+)\$/g,(_,m)=>{
+    m=m.replace(/\\left|\\right/g,'').replace(/\\%/g,'%').replace(/\\mathbb\{R\}/g,'ℝ').replace(/\\mathbb\{Z\}/g,'ℤ')
+     .replace(/\\text\{([^{}]*)\}/g,'$1').replace(/\\Delta/g,'Δ').replace(/\\in\b/g,'∈').replace(/\}\\log/g,'} log').replace(/\\log/g,'log')
+     .replace(/\\neq/g,'≠').replace(/\\le(q)?/g,'≤').replace(/\\ge(q)?/g,'≥').replace(/\\times/g,'×').replace(/\\div/g,'÷')
+     .replace(/\\cdot/g,'·').replace(/\\implies/g,'⇒').replace(/\\Rightarrow/g,'⇒').replace(/\\to/g,'→').replace(/\\infty/g,'∞')
+     .replace(/\\approx/g,'≈').replace(/\\pm/g,'±').replace(/\\,|\\;|\\ /g,' ').replace(/-/g,'−');
+    for(let k=0;k<12;k++){const o=m;
+      m=m.replace(/\\frac\{([^{}]*)\}\{([^{}]*)\}/g,(_,a,b)=>(simple(a)?a:'('+a+')')+'/'+(simple(b)?b:'('+b+')'))
+         .replace(/\\sqrt\[([^\]]*)\]\{([^{}]*)\}/g,(_,n,x)=>[...n].map(c=>SUP[c]||c).join('')+'√'+(simple(x)?x:'('+x+')'))
+         .replace(/\\sqrt\{([^{}]*)\}/g,(_,x)=>'√'+(simple(x)?x:'('+x+')'))
+         .replace(/_\{([^{}]*)\}/g,'\u0001$1\u0002').replace(/_([0-9A-Za-z])/g,'\u0001$1\u0002')
+         .replace(/\^\{([^{}]*)\}/g,(_,t)=>sup(t)).replace(/\^([0-9a-z+−])/g,(_,c)=>SUP[c]||'^'+c);
+      if(m===o)break;}
+    return m.replace(/[{}]/g,'').replace(/\\/g,'');
+  });
+}
+const cardHTML=s=>{const d=document.createElement('div');d.textContent=s;
+  return d.innerHTML.replace(/\u0001/g,'<sub>').replace(/\u0002/g,'</sub>').replace(/\u0003/g,'<sup class="ex">').replace(/\u0004/g,'</sup>');};
+const CARDS=CARDS_RAW.map(c=>({f:tex2u(c.f),b:tex2u(c.b)}));
+(function(){
+  const KEY='math3-u7-cards';let mark={};try{mark=JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catch(e){mark={};}
+  const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(mark));}catch(e){}};
+  let order=CARDS.map((_,i)=>i),filter='all',pos=0;
+  const fc=$('#fc');
+  const list=()=>filter==='all'?order:order.filter(i=>mark[i]!=='know');
+  function show(){
+    const L=list();
+    if(!CARDS.length){$('#fcFront').textContent='（學習卡資料尚未載入）';$('#fcStat').textContent='';return;}
+    if(!L.length){$('#fcFront').textContent='🎉 全部都會了！按「清除標記」或切回「全部」再練一次。';$('#fcBack').textContent='';fc.classList.remove('flip');statLine();return;}
+    pos=(pos+L.length)%L.length;const i=L[pos],c=CARDS[i];fc.classList.remove('flip');
+    const tag=`第 ${pos+1} / ${L.length} 張`+(mark[i]==='know'?'　✔ 會了':mark[i]==='again'?'　↻ 再複習':'');
+    $('#fcFront').innerHTML=cardHTML(c.f);$('#fcBack').innerHTML=cardHTML(c.b);$('#fcTagF').textContent=tag;$('#fcTagB').textContent=tag+'　答案';statLine();
+  }
+  function statLine(){const k=Object.values(mark).filter(v=>v==='know').length,a=Object.values(mark).filter(v=>v==='again').length;
+    $('#fcStat').textContent=`共 ${CARDS.length} 張｜我會了 ${k}｜再複習 ${a}｜未標記 ${CARDS.length-k-a}`;}
+  const flip=()=>fc.classList.toggle('flip');
+  fc.onclick=flip;$('#fcFlip').onclick=flip;
+  $('#fcPrev').onclick=()=>{pos--;show();};$('#fcNext').onclick=()=>{pos++;show();};
+  $('#fcShuffle').onclick=()=>{for(let i=order.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[order[i],order[j]]=[order[j],order[i]];}pos=0;show();};
+  const setMark=v=>{const L=list();if(!L.length)return;mark[L[pos]]=v;save();if(filter==='todo'&&v==='know'){show();}else{pos++;show();}};
+  $('#fcKnow').onclick=()=>setMark('know');$('#fcAgain').onclick=()=>setMark('again');
+  $('#fcReset').onclick=()=>{mark={};save();pos=0;show();};
+  segTabs($('#fcFilter'),b=>{filter=b.dataset.f;pos=0;show();});
+  fc.addEventListener('keydown',e=>{if(e.key===' '||e.key==='Enter'){flip();e.preventDefault();}if(e.key==='ArrowRight'){pos++;show();}if(e.key==='ArrowLeft'){pos--;show();}});
+  show();
+})();
+
+/* ================= Tools panel ================= */
+(function(){
+  const tools=$('#tools'),head=$('#toolsHead');
+  /* 收合／展開：收合時只剩左側圖示列，頁面內容自動讓位（body.tools-min） */
+  const MINKEY='lesson-tools-min';
+  function setMin(m){tools.classList.toggle('min',m);document.body.classList.toggle('tools-min',m);
+    const b=$('#toolsMin');b.textContent=m?'»':'«';b.title=m?'展開教學工具':'收合成工具列';
+    try{localStorage.setItem(MINKEY,m?'1':'0');}catch(e){}}
+  let saved=null;try{saved=localStorage.getItem(MINKEY);}catch(e){}
+  setMin(saved!==null?saved==='1':innerWidth<900);
+  $$('.tool-tabs button').forEach(b=>b.onclick=()=>{$$('.tool-tabs button').forEach(x=>x.classList.toggle('on',x===b));$$('.tool-pane').forEach(p=>p.classList.toggle('on',p.dataset.p===b.dataset.t));if(tools.classList.contains('min'))setMin(false);});
+  $('#toolsMin').onclick=e=>{e.stopPropagation();setMin(!tools.classList.contains('min'));};
+
+  /* big overlay */
+  const big=$('#bigShow');let bigMode=null;
+  big.onclick=()=>{big.classList.remove('on','alarm');bigMode=null;};
+  function showBig(text,sub,mode){$('#bigNum').textContent=text;$('#bigSub').textContent=sub;big.classList.add('on');bigMode=mode;}
+
+  /* audio */
+  let ac=null;function beep(times=3){if(!$('#tSound').checked)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();
+    for(let i=0;i<times;i++){const o=ac.createOscillator(),g=ac.createGain();o.type='sine';o.frequency.value=880;o.connect(g);g.connect(ac.destination);
+      const t0=ac.currentTime+i*0.45;g.gain.setValueAtTime(0.0001,t0);g.gain.exponentialRampToValueAtTime(0.4,t0+0.02);g.gain.exponentialRampToValueAtTime(0.0001,t0+0.35);o.start(t0);o.stop(t0+0.4);}}catch(e){}}
+
+  /* lottery */
+  let drawn=[],rolling=false;
+  function pool(){const a=+$('#lotFrom').value,b=+$('#lotTo').value,lo=Math.min(a,b),hi=Math.max(a,b);const arr=[];for(let i=lo;i<=hi;i++)if(!$('#lotNoRep').checked||!drawn.includes(i))arr.push(i);return arr;}
+  function hist(){$('#lotHist').innerHTML=drawn.map(n=>`<span>${n}</span>`).join('');$('#lotInfo').textContent=`已抽 ${drawn.length} 位，剩 ${pool().length} 位可抽`;}
+  $('#lotGo').onclick=()=>{if(rolling)return;const p=pool();if(!p.length){$('#lotNum').textContent='抽完';return;}
+    rolling=true;const num=$('#lotNum');const t0=performance.now();
+    const tick=()=>{num.textContent=p[Math.floor(Math.random()*p.length)];if(performance.now()-t0<1300){setTimeout(tick,60+(performance.now()-t0)/12);}
+      else{const pick=p[Math.floor(Math.random()*p.length)];num.textContent=pick;drawn.push(pick);hist();rolling=false;beep(1);
+        if($('#lotBig').checked)showBig(pick,'抽中座號 · 點任意處關閉','lot');}};
+    tick();};
+  $('#lotReset').onclick=()=>{drawn=[];$('#lotNum').textContent='?';hist();};
+  ['lotFrom','lotTo','lotNoRep'].forEach(id=>$('#'+id).onchange=hist);hist();
+
+  /* timer */
+  let total=180,remain=180000,endAt=0,running=false,iv=null;
+  const disp=$('#tDisp'),startBtn=$('#tStart');
+  const fmt=ms=>{const s=Math.ceil(ms/1000);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');};
+  function render(){disp.textContent=fmt(remain);if(bigMode==='timer')$('#bigNum').textContent=fmt(remain);}
+  function stop(){running=false;clearInterval(iv);startBtn.textContent=remain>0?'▶ 繼續':'▶ 開始';startBtn.classList.remove('stop');}
+  function set(sec){stop();total=Math.max(0,sec);remain=total*1000;disp.classList.remove('alarm');big.classList.remove('alarm');startBtn.textContent='▶ 開始';render();}
+  startBtn.onclick=()=>{if(running){remain=Math.max(0,endAt-Date.now());stop();render();return;}
+    if(remain<=0)remain=total*1000;if(remain<=0)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();ac.resume();}catch(e){}
+    disp.classList.remove('alarm');big.classList.remove('alarm');
+    running=true;endAt=Date.now()+remain;startBtn.textContent='⏸ 暫停';startBtn.classList.add('stop');
+    iv=setInterval(()=>{remain=Math.max(0,endAt-Date.now());render();if(remain<=0){stop();disp.classList.add('alarm');if(bigMode==='timer'){big.classList.add('alarm');$('#bigSub').textContent='時間到！點任意處關閉';}beep(4);}},200);};
+  $('#tReset').onclick=()=>set(total);
+  $$('[data-s]').forEach(b=>b.onclick=()=>set(+b.dataset.s));
+  $$('[data-d]').forEach(b=>b.onclick=()=>{const cur=running?Math.max(0,endAt-Date.now()):remain;const nv=Math.max(0,cur+(+b.dataset.d)*1000);
+    if(running){endAt=Date.now()+nv;remain=nv;}else{remain=nv;total=Math.ceil(nv/1000);}disp.classList.remove('alarm');render();});
+  $('#tBig').onclick=()=>showBig(fmt(remain),running?'計時中 · 點任意處關閉':'點任意處關閉','timer');
+
+  /* pen */
+  const cv=$('#ink'),ctx=cv.getContext('2d');let strokes=[],cur=null,active=false,color='#ff5a5a',mode='pen';
+  const COLORS=['#ff5a5a','#ffd84d','#36e0ff','#3ee08f','#ffffff','#000000'];
+  $('#penColors').innerHTML=COLORS.map((c,i)=>`<button class="sw ${i?'':'on'}" style="background:${c}" data-c="${c}" aria-label="顏色"></button>`).join('');
+  $$('#penColors .sw').forEach(b=>b.onclick=()=>{color=b.dataset.c;$$('#penColors .sw').forEach(x=>x.classList.toggle('on',x===b));if(mode==='er')setMode('pen');});
+  function setMode(m){mode=m;$$('#penModes button').forEach(x=>x.classList.toggle('on',x.dataset.m===m));}
+  $$('#penModes button').forEach(b=>b.onclick=()=>setMode(b.dataset.m));
+  function size(){const d=devicePixelRatio||1;cv.width=innerWidth*d;cv.height=innerHeight*d;ctx.setTransform(d,0,0,d,0,0);redraw();}
+  function redraw(){ctx.clearRect(0,0,innerWidth,innerHeight);const sx=scrollX,sy=scrollY;
+    for(const s of strokes){if(s.pts.length<1)continue;ctx.save();ctx.lineCap='round';ctx.lineJoin='round';
+      ctx.globalCompositeOperation=s.mode==='er'?'destination-out':'source-over';ctx.globalAlpha=s.mode==='hl'?0.35:1;
+      ctx.strokeStyle=s.color;ctx.lineWidth=s.mode==='hl'?s.size*3:(s.mode==='er'?s.size*4:s.size);
+      ctx.beginPath();ctx.moveTo(s.pts[0][0]-sx,s.pts[0][1]-sy);for(const p of s.pts)ctx.lineTo(p[0]-sx,p[1]-sy);if(s.pts.length===1)ctx.lineTo(s.pts[0][0]-sx+0.1,s.pts[0][1]-sy);ctx.stroke();ctx.restore();}}
+  let raf=0;const sched=()=>{if(!raf)raf=requestAnimationFrame(()=>{raf=0;redraw();});};
+  addEventListener('resize',size);addEventListener('scroll',()=>{if(strokes.length)sched();},{passive:true});
+  cv.addEventListener('pointerdown',e=>{if(!active)return;cv.setPointerCapture(e.pointerId);cur={mode,color,size:+$('#penSize').value,pts:[[e.clientX+scrollX,e.clientY+scrollY]]};strokes.push(cur);sched();});
+  cv.addEventListener('pointermove',e=>{if(!cur)return;cur.pts.push([e.clientX+scrollX,e.clientY+scrollY]);sched();});
+  const end=()=>{cur=null;};cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
+  cv.addEventListener('wheel',e=>{scrollBy(0,e.deltaY);},{passive:true});
+  function setActive(on){active=on;cv.classList.toggle('active',on);document.body.classList.toggle('inking',on);
+    const b=$('#penToggle');b.textContent=on?'⏹ 結束畫筆':'✏️ 開始畫筆';b.classList.toggle('stop',on);}
+  $('#penToggle').onclick=()=>setActive(!active);
+  $('#penUndo').onclick=()=>{strokes.pop();redraw();};
+  $('#penClear').onclick=()=>{strokes=[];redraw();};
+  addEventListener('keydown',e=>{if(e.key==='Escape'){if(active)setActive(false);lb.classList.remove('on');big.classList.remove('on','alarm');bigMode=null;}
+    if((e.ctrlKey||e.metaKey)&&e.key==='z'&&active){strokes.pop();redraw();e.preventDefault();}});
+  size();
+})();
+
+/* ================= Superscript exponents =================
+   把文字裡的 a^(m/n)、2^√2、2^1.41 自動改成真正的上標（HTML 用 <sup>，SVG 用縮小上移的 tspan）。
+   互動圖形每次重畫的文字也會被 MutationObserver 自動轉換。 */
+(function(){
+  const RE=/\^(\((?:[^()]|\([^()]*\))*\)|√?[0-9A-Za-z.]+)/g;
+  const SVGNS='http://www.w3.org/2000/svg';
+  function fix(t){
+    const s=t.nodeValue,p=t.parentNode;if(!s||s.indexOf('^')<0||!p)return;
+    if(p.closest&&p.closest('script,style,textarea,title'))return;
+    const svg=p instanceof SVGElement;const frag=document.createDocumentFragment();let last=0,m;RE.lastIndex=0;
+    const plain=x=>{if(!x)return;if(svg){const ts=document.createElementNS(SVGNS,'tspan');ts.textContent=x;frag.appendChild(ts);}else frag.appendChild(document.createTextNode(x));};
+    while((m=RE.exec(s))){
+      plain(s.slice(last,m.index));
+      let e=m[1];if(e[0]==='('&&e[e.length-1]===')')e=e.slice(1,-1);
+      if(svg){const ts=document.createElementNS(SVGNS,'tspan');ts.setAttribute('baseline-shift','super');ts.setAttribute('font-size','72%');ts.textContent=e;frag.appendChild(ts);}
+      else{const su=document.createElement('sup');su.className='ex';su.textContent=e;frag.appendChild(su);}
+      last=RE.lastIndex;}
+    if(!last)return;plain(s.slice(last));p.replaceChild(frag,t);
+  }
+  function scan(root){
+    if(root.nodeType===3){fix(root);return;}
+    if(root.nodeType!==1)return;
+    const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT,{acceptNode:n=>n.nodeValue.indexOf('^')>=0?1:3});
+    const list=[];while(w.nextNode())list.push(w.currentNode);list.forEach(fix);
+  }
+  scan(document.body);
+  new MutationObserver(ms=>ms.forEach(mu=>{if(mu.type==='characterData')fix(mu.target);else mu.addedNodes.forEach(scan);}))
+    .observe(document.body,{childList:true,subtree:true,characterData:true});
+})();
+
+/* nav highlight */
+(function(){const links=$$('nav.top a');const io=new IntersectionObserver(es=>{es.forEach(en=>{if(en.isIntersecting)links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+en.target.id));});},{rootMargin:'-40% 0px -55% 0px'});
+  $$('.unit').forEach(s=>io.observe(s));})();
+</script>
+</body>
+</html>
